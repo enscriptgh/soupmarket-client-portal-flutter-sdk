@@ -20,6 +20,7 @@ void main() {
     dioService.initialize(
       baseUrl: 'https://api.soupmarket.com',
       apiKey: 'test_api_key',
+      apiSecret: 'test_api_key',
     );
   });
   group('DioService CRUD Operations', () {
