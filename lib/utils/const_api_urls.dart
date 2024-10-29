@@ -1,7 +1,7 @@
-final String CLIENT_REGISTER = "/client/register.json";
+final String CLIENT_REGISTER = "/client/register";
 final String CLIENT_ACCOUNT_SERVICE = "/client/accountServices.json?contact=";
-final String SEARCH_PIN_RESET_QUESTION = "/pinResetQuestion/index.json";
-final String PIN_RESET_QUESTION = "/client/accountServices.json";
+final String SEARCH_PIN_RESET_QUESTION = "/pinResetQuestion/index";
+final String PIN_RESET_QUESTION = "/client/accountServices";
 
 //KYC
 final String ALL_INDIVIDUAL = "/client/individualList.json?contact=";
@@ -34,32 +34,32 @@ final String INDIVIDUAL_NEXT_OF_KIN_INFORMATION_UPDATE = "/individualNextOfKin/u
 final String FUND_UNDER_MANAGEMENT = "/security/index.json?enableFundManagement=true";
 final String ORDER_REQUEST_STATUS = "/client/orderRequestStatus/";
 
-final String CREATE_ORDER_REQUEST = "/client/orderRequest.json";
+final String CREATE_ORDER_REQUEST = "/client/orderRequest";
 final String CLIENT_CUSTODY_STATEMENT = "/client/custodyStatement.json?contact=";
 final String ORDER_REQUEST_HISTORY = "/client/orderRequestHistory.json?contact=";
 
-final String SAVE_ACCOUNT_SERVICE = "/client/createAccountServices.json";
-final String UPDATE_ACCOUNT_SERVICE = "/client/updateAccountServices.json";
-final String CHECK_DEPOSIT_AND_WITHDRAWAL_PROCESS = "/client/accountServices.json";
+final String SAVE_ACCOUNT_SERVICE = "/client/createAccountServices";
+final String UPDATE_ACCOUNT_SERVICE = "/client/updateAccountServices";
+final String CHECK_DEPOSIT_AND_WITHDRAWAL_PROCESS = "/client/accountServices";
 
-final String PIN_RESET_QUESTIONS = "/pinResetQuestion/index.json";
+final String PIN_RESET_QUESTIONS = "/pinResetQuestion/index";
 final String REQUEST_PIN_RESET = "/client/pinReset.json?contact=";
 final String CONFIRM_PIN_RESET = "/client/pinReset.json?contact=";
 final String CHANGE_PIN_RESET = "/client/changePin.json?contact=";
 final String CREATE_PIN_RESET = "/client/createPin.json?contact=";
 
 //Security & Asset Aloocation
-final String CREATE_SECURITY_SUB_TYPE_ASSET_ALLOCATION = "/client/createSecuritySubTypeAssetAllocation.json";
+final String CREATE_SECURITY_SUB_TYPE_ASSET_ALLOCATION = "/client/createSecuritySubTypeAssetAllocation";
 final String SECURITY_FLOWS = "/flow/index.json?security=";
-final String SECURITY_ASSET_ALLOCATION = "/client/createSecurityAssetAllocation.json";
+final String SECURITY_ASSET_ALLOCATION = "/client/createSecurityAssetAllocation";
 
 final String SEND_SMS_MESSAGE = "/sendMessage/sendSms.json?smsNumber=";
 
-final String LOAD_ALL_ANNUAL_GROSS_INCOME = "/annualGrossIncome/index.json";
-final String LOAD_ALL_MONTHLY_INCOME = "/monthlyGrossIncome/index.json";
-final String CLIENT_INDUSTRY = "/clientIndustry/index.json";
-final String LOAD_ENUM_UTILITIES = "/enumUtility/index.json";
-final String LOAD_ANNUAL_TURN_OVER = "/annualTurnOver/index.json";
+final String LOAD_ALL_ANNUAL_GROSS_INCOME = "/annualGrossIncome/index";
+final String LOAD_ALL_MONTHLY_INCOME = "/monthlyGrossIncome/index";
+final String CLIENT_INDUSTRY = "/clientIndustry/index";
+final String LOAD_ENUM_UTILITIES = "/enumUtility/index";
+final String LOAD_ANNUAL_TURN_OVER = "/annualTurnOver/index";
 
-final String SAVE_CLIENT_BANK_DETAILS = "/clientBankDetails/save.json";
+final String SAVE_CLIENT_BANK_DETAILS = "/clientBankDetails/save";
 final String UPDATE_CLIENT_BANK_DETAILS = "/clientBankDetails/update/";
