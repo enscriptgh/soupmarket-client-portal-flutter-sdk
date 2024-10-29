@@ -1,5 +1,6 @@
 // Main SDK Class
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:soupmarket_sdk/config/soup_market_config.dart';
@@ -20,15 +21,17 @@ class SDKServiceRequest {
   void initialize({
     required String baseUrl,
     required String apiKey,
+    required String apiSecret,
     Map<String, dynamic>? headers,
     int timeout = 30000,
   }) {
+    String basicAuthCredentials = getBasicAuthToken(apiKey, apiSecret);
     _dio.options = BaseOptions(
       baseUrl: baseUrl,
       connectTimeout: Duration(milliseconds: timeout),
       receiveTimeout: Duration(milliseconds: timeout),
       headers: {
-        'Authorization': 'Bearer $apiKey',
+        'Authorization': basicAuthCredentials,
         'Content-Type': 'application/json',
         ...?headers,
       },
@@ -41,6 +44,12 @@ class SDKServiceRequest {
       error: true,
       requestBody: true,
     ));
+  }
+
+  String getBasicAuthToken(String apiKey, String apiSecret) {
+    final credentials = '$apiKey:$apiSecret';
+    final encodedCredentials = base64.encode(utf8.encode(credentials));
+    return 'Basic $encodedCredentials';
   }
 
   Future<SDKServiceResponse<T>> get<T>({
