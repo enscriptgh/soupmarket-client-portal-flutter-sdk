@@ -9,7 +9,7 @@ import 'package:soupmarket_sdk/utils/api_exception.dart';
 
 class SDKServiceRequest {
   // late final Dio dio;
-  static late Dio dio;
+  late final Dio dio = Dio(); // Ensure dio is initialized
   late final SoupMarketConfig _config;
 
   // Singleton pattern
