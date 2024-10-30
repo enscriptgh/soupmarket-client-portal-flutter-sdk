@@ -9,7 +9,6 @@ class SoupMarketSDK {
   static final SoupMarketSDK instance = SoupMarketSDK._internal();
   late final SoupMarketConfig _config;
   late final SDKServiceRequest _sdkServiceRequest;
-  late final Dio _dio;
 
   SoupMarketSDK._internal();
 
