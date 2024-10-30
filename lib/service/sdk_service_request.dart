@@ -1,14 +1,15 @@
 import 'dart:async';
 import 'dart:convert';
 
-// import 'package:dio/dio.dart' as _dio;
+// import 'package:dio/dio.dart' as dio;
 import 'package:dio/dio.dart';
 import 'package:soupmarket_sdk/config/soup_market_config.dart';
 import 'package:soupmarket_sdk/service/sdk_service_response.dart';
 import 'package:soupmarket_sdk/utils/api_exception.dart';
 
 class SDKServiceRequest {
-  late final Dio _dio;
+  // late final Dio dio;
+  static late Dio dio;
   late final SoupMarketConfig _config;
 
   // Singleton pattern
@@ -26,7 +27,7 @@ class SDKServiceRequest {
     int timeout = 30000,
   }) {
     String basicAuthCredentials = getBasicAuthToken(apiKey, apiSecret);
-    _dio.options = BaseOptions(
+    dio.options = BaseOptions(
       baseUrl: baseUrl,
       connectTimeout: Duration(milliseconds: timeout),
       receiveTimeout: Duration(milliseconds: timeout),
@@ -38,7 +39,7 @@ class SDKServiceRequest {
     );
 
     // Add interceptors
-    _dio.interceptors.add(LogInterceptor(
+    dio.interceptors.add(LogInterceptor(
       request: true,
       responseBody: true,
       error: true,
@@ -58,7 +59,7 @@ class SDKServiceRequest {
     Map<String, dynamic>? headers,
   }) async {
     try {
-      final response = await _dio.get(
+      final response = await dio.get(
         endpoint,
         queryParameters: queryParameters,
         options: Options(headers: headers),
