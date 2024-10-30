@@ -47,7 +47,9 @@ void main() {
   SoupMarketSDK.instance.initialize(
     SoupMarketConfig(
       apiKey: 'your_api_key',
+      apiSecret: 'your_api_secret',
       environment: Environment.sandbox,
+      baseUrl: "https://demo.soupmarkets.com",
       timeout: Duration(seconds: 60),
       additionalHeaders: {
         'App-Version': '1.0.0',
@@ -66,7 +68,7 @@ void main() {
 ```dart
 // Sign up a new user
 try {
-  final result = await SDKServiceRequest.instance.auth.signUp(
+  final result = await SoupMarketSDK.instance.auth.signUp(
     email: 'user@example.com',
     password: 'securePassword123',
     fullName: 'John Doe',
@@ -78,7 +80,7 @@ try {
 
 // Login
 try {
-  final result = await SDKServiceRequest.instance.auth.login(
+  final result = await SoupMarketSDK.instance.auth.login(
     email: 'user@example.com',
     password: 'securePassword123',
   );
@@ -92,9 +94,8 @@ try {
 
 ```dart
 try {
-  final result = await SDKServiceRequest.instance.kyc.submit(
-    userId: 'user_id',
-    kycData: {
+  final result = await SoupMarketSDK.instance.clientRegister(
+    map: {
       'idType': 'passport',
       'idNumber': 'ABC123456',
       'dateOfBirth': '1990-01-01',
@@ -106,112 +107,6 @@ try {
   print('Error submitting KYC: $e');
 }
 ```
-
-#### Order Management
-
-```dart
-// Create a new order
-try {
-  final order = await SDKServiceRequest.instance.orders.create(
-    userId: 'user_id',
-    orderDetails: {
-      'amount': 100.00,
-      'currency': 'USD',
-      'items': [
-        {
-          'id': 'item_1',
-          'quantity': 2,
-        }
-      ],
-    },
-  );
-  print('Order created: ${order.orderId}');
-} catch (e) {
-  print('Error creating order: $e');
-}
-
-// Check order status
-try {
-  final status = await SDKServiceRequest.instance.orders.getStatus(
-    orderId: 'order_123',
-  );
-  print('Order status: ${status.currentStatus}');
-} catch (e) {
-  print('Error checking order status: $e');
-}
-```
-
-### 3. Using with GetX (Optional)
-
-If you're using GetX for state management:
-
-```dart
-// Initialize controller
-final controller = Get.put(SoupMarketController());
-
-// In your widget
-Obx(() {
-  if (controller.isLoading) {
-    return CircularProgressIndicator();
-  }
-  
-  if (controller.user != null) {
-    return Text('Welcome ${controller.user!.fullName}');
-  }
-  
-  return LoginForm();
-});
-
-// Perform actions
-await controller.login('user@example.com', 'password123');
-```
-
-## Advanced Usage
-
-### Error Handling
-
-The SDK provides specific error types for different scenarios:
-
-```dart
-try {
-  await SDKServiceRequest.instance.auth.login(
-    email: 'user@example.com',
-    password: 'wrong_password',
-  );
-} catch (e) {
-  if (e is SoupMarketAuthException) {
-    print('Authentication error: ${e.message}');
-  } else if (e is SoupMarketNetworkException) {
-    print('Network error: ${e.message}');
-  } else {
-    print('Unknown error: $e');
-  }
-}
-```
-
-### Environment Configuration
-
-```dart
-// For development/testing
-SDKServiceRequest.initialize(
-  SoupMarketConfig(
-    apiKey: 'sandbox_key',
-    environment: Environment.sandbox,
-    logLevel: LogLevel.debug,
-  ),
-);
-
-// For production
-SDKServiceRequest.initialize(
-  SoupMarketConfig(
-    apiKey: 'production_key',
-    environment: Environment.production,
-    logLevel: LogLevel.error,
-  ),
-);
-```
-
-## Available Methods
 
 ### Authentication
 - `signUp()`
@@ -248,6 +143,7 @@ The SDK includes automatic retry logic for network failures. You can configure r
 SDKServiceRequest.initialize(
   SoupMarketConfig(
     apiKey: 'your_api_key',
+    apiSecret: 'your_api_secret',
     networkRetries: 3,
     retryDelay: Duration(seconds: 2),
   ),
