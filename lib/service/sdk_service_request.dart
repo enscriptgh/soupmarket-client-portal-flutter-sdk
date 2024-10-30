@@ -1,13 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:dio/dio.dart' as _dio;
+// import 'package:dio/dio.dart' as _dio;
+import 'package:dio/dio.dart';
 import 'package:soupmarket_sdk/config/soup_market_config.dart';
 import 'package:soupmarket_sdk/service/sdk_service_response.dart';
 import 'package:soupmarket_sdk/utils/api_exception.dart';
 
 class SDKServiceRequest {
-  // late final Dio _dio;
+  late final Dio _dio;
   late final SoupMarketConfig _config;
 
   // Singleton pattern
@@ -25,7 +26,7 @@ class SDKServiceRequest {
     int timeout = 30000,
   }) {
     String basicAuthCredentials = getBasicAuthToken(apiKey, apiSecret);
-    _dio.Dio().options = _dio.BaseOptions(
+    _dio.options = BaseOptions(
       baseUrl: baseUrl,
       connectTimeout: Duration(milliseconds: timeout),
       receiveTimeout: Duration(milliseconds: timeout),
@@ -37,7 +38,7 @@ class SDKServiceRequest {
     );
 
     // Add interceptors
-    _dio.Dio().interceptors.add(_dio.LogInterceptor(
+    _dio.interceptors.add(LogInterceptor(
       request: true,
       responseBody: true,
       error: true,
@@ -57,10 +58,10 @@ class SDKServiceRequest {
     Map<String, dynamic>? headers,
   }) async {
     try {
-      final response = await _dio.Dio().get(
+      final response = await _dio.get(
         endpoint,
         queryParameters: queryParameters,
-        options: _dio.Options(headers: headers),
+        options: Options(headers: headers),
       );
       return SDKServiceResponse.success(data: response.data as T);
     } catch (e) {
@@ -71,16 +72,16 @@ class SDKServiceRequest {
   Future<SDKServiceResponse<T>> post<T>({
     required String endpoint,
     // dynamic data,
-  _dio.FormData? data,
+  FormData? data,
     Map<String, dynamic>? queryParameters,
     Map<String, dynamic>? headers,
   }) async {
     try {
-      final response = await _dio.Dio().post(
+      final response = await Dio().post(
         endpoint,
         data: data,
         queryParameters: queryParameters,
-        options: _dio.Options(headers: headers),
+        options: Options(headers: headers),
       );
       return SDKServiceResponse.success(data: response.data as T);
     } catch (e) {
@@ -95,11 +96,11 @@ class SDKServiceRequest {
     Map<String, dynamic>? headers,
   }) async {
     try {
-      final response = await _dio.Dio().put(
+      final response = await Dio().put(
         endpoint,
         data: data,
         queryParameters: queryParameters,
-        options: _dio.Options(headers: headers),
+        options: Options(headers: headers),
       );
       return SDKServiceResponse.success(data: response.data as T);
     } catch (e) {
@@ -113,10 +114,10 @@ class SDKServiceRequest {
     Map<String, dynamic>? headers,
   }) async {
     try {
-      final response = await _dio.Dio().delete(
+      final response = await Dio().delete(
         endpoint,
         queryParameters: queryParameters,
-        options: _dio.Options(headers: headers),
+        options: Options(headers: headers),
       );
       return SDKServiceResponse.success(data: response.data as T);
     } catch (e) {
@@ -125,17 +126,17 @@ class SDKServiceRequest {
   }
 
   ServiceError _handleError(dynamic error) {
-    if (error is _dio.DioError) {
+    if (error is DioError) {
       switch (error.type) {
-        case _dio.DioErrorType.connectionTimeout:
-        case _dio.DioErrorType.sendTimeout:
-        case _dio.DioErrorType.receiveTimeout:
+        case DioErrorType.connectionTimeout:
+        case DioErrorType.sendTimeout:
+        case DioErrorType.receiveTimeout:
           return ServiceError(
             code: 'TIMEOUT',
             message: 'Connection timeout',
             originalError: error,
           );
-        case _dio.DioErrorType.badResponse:
+        case DioErrorType.badResponse:
           return ServiceError(
             code: '${error.response?.statusCode}',
             message: error.response?.data?['message'] ??
