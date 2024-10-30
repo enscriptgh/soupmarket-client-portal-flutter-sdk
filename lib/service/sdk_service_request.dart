@@ -78,7 +78,7 @@ class SDKServiceRequest {
     Map<String, dynamic>? headers,
   }) async {
     try {
-      final response = await Dio().post(
+      final response = await dio.post(
         endpoint,
         data: data,
         queryParameters: queryParameters,
@@ -97,7 +97,7 @@ class SDKServiceRequest {
     Map<String, dynamic>? headers,
   }) async {
     try {
-      final response = await Dio().put(
+      final response = await dio.put(
         endpoint,
         data: data,
         queryParameters: queryParameters,
@@ -115,7 +115,7 @@ class SDKServiceRequest {
     Map<String, dynamic>? headers,
   }) async {
     try {
-      final response = await Dio().delete(
+      final response = await dio.delete(
         endpoint,
         queryParameters: queryParameters,
         options: Options(headers: headers),
