@@ -34,14 +34,21 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<Map<String, dynamic>>> clientAccountService({String? contact}) async {
+    final queryParameters = {
+      'contact': contact,
+    };
     return _sdkServiceRequest.get<Map<String, dynamic>>(
       endpoint: "${CLIENT_ACCOUNT_SERVICE+contact!}.json",
+      queryParameters: queryParameters
     );
   }
 
-  Future<SDKServiceResponse<Map<String, dynamic>>> searchPinResetQuestion(String searchWord) async {
-    String endpoint = SEARCH_PIN_RESET_QUESTION+"?search="+searchWord;
-    return _sdkServiceRequest.get(endpoint: endpoint);
+  Future<SDKServiceResponse<Map<String, dynamic>>> searchPinResetQuestion({String? searchWord, String? contact}) async {
+    final queryParameters = {
+      'contact': contact,
+    };
+    String endpoint = SEARCH_PIN_RESET_QUESTION+".json?search="+searchWord!;
+    return _sdkServiceRequest.get(endpoint: endpoint, queryParameters: queryParameters);
   }
 
   // Future<SDKServiceResponse<Map<String, dynamic>>> pinResetQuestion(String searchWord) async {
@@ -49,14 +56,20 @@ class SoupMarketSDK {
   //   return _sdkServiceRequest.get(endpoint: endpoint);
   // }
 
-  Future<SDKServiceResponse<Map<String, dynamic>>> individualBasicInformation(String id) async {
+  Future<SDKServiceResponse<Map<String, dynamic>>> individualBasicInformation({String? id, String? contact}) async {
+    final queryParameters = {
+      'contact': contact,
+    };
     String endpoint = INDIVIDUAL_BASIC_INFORMATION_SHOW+"${id}.json";
-    return _sdkServiceRequest.get(endpoint: endpoint);
+    return _sdkServiceRequest.get(endpoint: endpoint, queryParameters: queryParameters);
   }
 
-  Future<SDKServiceResponse<Map<String, dynamic>>> allIndividualList(String id) async {
+  Future<SDKServiceResponse<Map<String, dynamic>>> allIndividualList({String? id, String? contact}) async {
     String endpoint = ALL_INDIVIDUAL+"${id}.json";
-    return _sdkServiceRequest.get(endpoint: endpoint);
+    final queryParameters = {
+      'contact': contact,
+    };
+    return _sdkServiceRequest.get(endpoint: endpoint, queryParameters: queryParameters);
   }
 
   Future<SDKServiceResponse<Map<String, dynamic>>> individualBasicInformationSave({Map<String, dynamic>? data}) async {
@@ -71,9 +84,12 @@ class SoupMarketSDK {
     return _sdkServiceRequest.put(endpoint: endpoint, data: formData);
   }
 
-  Future<SDKServiceResponse<Map<String, dynamic>>> individualIdentityInformationShow({String? id}) async {
+  Future<SDKServiceResponse<Map<String, dynamic>>> individualIdentityInformationShow({String? id, String? contact}) async {
     String endpoint = "${INDIVIDUAL_IDENTITY_INFORMATION_SHOW}${id}.json";
-    return _sdkServiceRequest.get(endpoint: endpoint,);
+    final queryParameters = {
+      'contact': contact,
+    };
+    return _sdkServiceRequest.get(endpoint: endpoint, queryParameters: queryParameters);
   }
 
   Future<SDKServiceResponse<Map<String, dynamic>>> individualIdentityInformationSave({Map<String, dynamic>? data}) async {
@@ -88,9 +104,12 @@ class SoupMarketSDK {
     return _sdkServiceRequest.put(endpoint: endpoint, data: formData);
   }
 
-  Future<SDKServiceResponse<Map<String, dynamic>>> individualAddressInformationShow({String? id}) async {
+  Future<SDKServiceResponse<Map<String, dynamic>>> individualAddressInformationShow({String? id, String? contact}) async {
     String endpoint = "${INDIVIDUAL_ADDRESS_INFORMATION_SHOW}${id}.json";
-    return _sdkServiceRequest.get(endpoint: endpoint,);
+    final queryParameters = {
+      'contact': contact,
+    };
+    return _sdkServiceRequest.get(endpoint: endpoint, queryParameters: queryParameters);
   }
 
   Future<SDKServiceResponse<Map<String, dynamic>>> individualAddressInformationSave({Map<String, dynamic>? data}) async {
@@ -105,9 +124,12 @@ class SoupMarketSDK {
     return _sdkServiceRequest.put(endpoint: endpoint, data: formData);
   }
 
-  Future<SDKServiceResponse<Map<String, dynamic>>> individualEmploymentInformationShow({String? id}) async {
+  Future<SDKServiceResponse<Map<String, dynamic>>> individualEmploymentInformationShow({String? id, String? contact}) async {
     String endpoint = "${INDIVIDUAL_EMPLOYMENT_INFORMATION_SHOW}${id}.json";
-    return _sdkServiceRequest.get(endpoint: endpoint,);
+    final queryParameters = {
+      'contact': contact,
+    };
+    return _sdkServiceRequest.get(endpoint: endpoint, queryParameters: queryParameters);
   }
 
   Future<SDKServiceResponse<Map<String, dynamic>>> individualEmploymentInformationSave({Map<String, dynamic>? data}) async {
@@ -122,9 +144,12 @@ class SoupMarketSDK {
     return _sdkServiceRequest.put(endpoint: endpoint, data: formData);
   }
 
-  Future<SDKServiceResponse<Map<String, dynamic>>> individuaFatcaInformationShow({String? id}) async {
+  Future<SDKServiceResponse<Map<String, dynamic>>> individuaFatcaInformationShow({String? id, String? contact}) async {
     String endpoint = "${INDIVIDUAL_USA_FATCA_INFORMATION_SHOW}${id}.json";
-    return _sdkServiceRequest.get(endpoint: endpoint,);
+    final queryParameters = {
+      'contact': contact,
+    };
+    return _sdkServiceRequest.get(endpoint: endpoint, queryParameters: queryParameters);
   }
 
   Future<SDKServiceResponse<Map<String, dynamic>>> individuaFatcaInformationSave({Map<String, dynamic>? data}) async {
@@ -139,9 +164,12 @@ class SoupMarketSDK {
     return _sdkServiceRequest.put(endpoint: endpoint, data: formData);
   }
 
-  Future<SDKServiceResponse<Map<String, dynamic>>> individualNextOfKinInformationShow({String? id}) async {
+  Future<SDKServiceResponse<Map<String, dynamic>>> individualNextOfKinInformationShow({String? id, String? contact}) async {
     String endpoint = "${INDIVIDUAL_NEXT_OF_KIN_INFORMATION_SHOW}${id}.json";
-    return _sdkServiceRequest.get(endpoint: endpoint,);
+    final queryParameters = {
+      'contact': contact,
+    };
+    return _sdkServiceRequest.get(endpoint: endpoint, queryParameters: queryParameters);
   }
 
   Future<SDKServiceResponse<Map<String, dynamic>>> individualNextOfKinInformationSave({Map<String, dynamic>? data}) async {
@@ -158,14 +186,20 @@ class SoupMarketSDK {
 
   ////////////////////////Order Management//////////////
 
-  Future<SDKServiceResponse<Map<String, dynamic>>> fundsUnderManagement() async {
+  Future<SDKServiceResponse<Map<String, dynamic>>> fundsUnderManagement({String? contact}) async {
     String endpoint = "${FUND_UNDER_MANAGEMENT}.json";
-    return _sdkServiceRequest.get(endpoint: endpoint,);
+    final queryParameters = {
+      'contact': contact,
+    };
+    return _sdkServiceRequest.get(endpoint: endpoint, queryParameters: queryParameters);
   }
 
   Future<SDKServiceResponse<Map<String, dynamic>>> orderRequestStatus({String? id, String? contact}) async {
-    String endpoint = "${ORDER_REQUEST_STATUS}${id}.json?contact=${contact}";
-    return _sdkServiceRequest.get(endpoint: endpoint,);
+    String endpoint = "${ORDER_REQUEST_STATUS}${id}.json";
+    final queryParameters = {
+      'contact': contact,
+    };
+    return _sdkServiceRequest.get(endpoint: endpoint, queryParameters: queryParameters);
   }
 
   Future<SDKServiceResponse<Map<String, dynamic>>> createOrderRequest({Map<String, dynamic>? data}) async {
@@ -186,68 +220,81 @@ class SoupMarketSDK {
     return _sdkServiceRequest.post(endpoint: endpoint, data: formData);
   }
 
-  Future<SDKServiceResponse<Map<String, dynamic>>> saveAccountServices({String? contact,Map<String, dynamic>? data}) async {
-    String endpoint = "${SAVE_ACCOUNT_SERVICE}.json?contact=${contact}";
+  Future<SDKServiceResponse<Map<String, dynamic>>> saveAccountServices({Map<String, dynamic>? data}) async {
+    String endpoint = "${SAVE_ACCOUNT_SERVICE}.json";
     FormData formData = FormData.fromMap(data!);
     return _sdkServiceRequest.post(endpoint: endpoint, data: formData);
   }
 
-  Future<SDKServiceResponse<Map<String, dynamic>>> updateAccountServices({String? contact, String? id, Map<String, dynamic>? data}) async {
-    String endpoint = "${UPDATE_ACCOUNT_SERVICE}.json?id=${id}&contact=${contact}";
+  Future<SDKServiceResponse<Map<String, dynamic>>> updateAccountServices({String? id, Map<String, dynamic>? data}) async {
+    String endpoint = "${UPDATE_ACCOUNT_SERVICE}.json";
     FormData formData = FormData.fromMap(data!);
+    formData.fields.add(MapEntry("id", id!));
     return _sdkServiceRequest.put(endpoint: endpoint, data: formData);
   }
 
   Future<SDKServiceResponse<Map<String, dynamic>>> checkDepositProcess({@required String? contact}) async {
-    String endpoint = "${CHECK_DEPOSIT_AND_WITHDRAWAL_PROCESS}.json?contact=${contact}";
-    return _sdkServiceRequest.get(endpoint: endpoint,);
+    String endpoint = "${CHECK_DEPOSIT_AND_WITHDRAWAL_PROCESS}.json";
+    final queryParameters = {
+      'contact': contact,
+    };
+    return _sdkServiceRequest.get(endpoint: endpoint, queryParameters: queryParameters);
   }
 
   /***PIN MANAGEMENT****/
-  Future<SDKServiceResponse<Map<String, dynamic>>> getPinResetQuestions({int max = 100}) async {
+  Future<SDKServiceResponse<Map<String, dynamic>>> getPinResetQuestions({int max = 100, String? contact}) async {
     String endpoint = "${PIN_RESET_QUESTIONS}.json?max=${max}";
-    return _sdkServiceRequest.get(endpoint: endpoint,);
+    final queryParameters = {
+      'contact': contact,
+    };
+    return _sdkServiceRequest.get(endpoint: endpoint, queryParameters: queryParameters);
   }
 
   Future<SDKServiceResponse<Map<String, dynamic>>> requestPinReset({String? contact}) async {
-    String endpoint = "${REQUEST_PIN_RESET}.json?contact=${contact}";
-    return _sdkServiceRequest.get(endpoint: endpoint,);
+    String endpoint = "${REQUEST_PIN_RESET}.json";
+    final queryParameters = {
+      'contact': contact,
+    };
+    return _sdkServiceRequest.get(endpoint: endpoint, queryParameters: queryParameters);
   }
 
-  Future<SDKServiceResponse<Map<String, dynamic>>> savePinReset({Map<String, dynamic>? data, @required String? contact}) async {
-    String endpoint = "${REQUEST_PIN_RESET}.json?contact=${contact}";
+  Future<SDKServiceResponse<Map<String, dynamic>>> savePinReset({Map<String, dynamic>? data}) async {
+    String endpoint = "${REQUEST_PIN_RESET}.json";
     FormData formData = FormData.fromMap(data!);
     return _sdkServiceRequest.post(endpoint: endpoint, data: formData);
   }
 
-  Future<SDKServiceResponse<Map<String, dynamic>>> confirmResetPin({Map<String, dynamic>? data, @required String? contact}) async {
-    String endpoint = "${CONFIRM_PIN_RESET}.json?contact=${contact}";
+  Future<SDKServiceResponse<Map<String, dynamic>>> confirmResetPin({Map<String, dynamic>? data}) async {
+    String endpoint = "${CONFIRM_PIN_RESET}.json";
     FormData formData = FormData.fromMap(data!);
     return _sdkServiceRequest.post(endpoint: endpoint, data: formData);
   }
 
-  Future<SDKServiceResponse<Map<String, dynamic>>> changePin({Map<String, dynamic>? data, @required String? contact}) async {
-    String endpoint = "${CHANGE_PIN_RESET}.json?contact=${contact}";
+  Future<SDKServiceResponse<Map<String, dynamic>>> changePin({Map<String, dynamic>? data}) async {
+    String endpoint = "${CHANGE_PIN_RESET}.json";
     FormData formData = FormData.fromMap(data!);
     return _sdkServiceRequest.post(endpoint: endpoint, data: formData);
   }
 
-  Future<SDKServiceResponse<Map<String, dynamic>>> createPin({Map<String, dynamic>? data, @required String? contact}) async {
-    String endpoint = "${CREATE_PIN_RESET}.json?contact=${contact}";
+  Future<SDKServiceResponse<Map<String, dynamic>>> createPin({Map<String, dynamic>? data}) async {
+    String endpoint = "${CREATE_PIN_RESET}.json";
     FormData formData = FormData.fromMap(data!);
     return _sdkServiceRequest.post(endpoint: endpoint, data: formData);
   }
 
   /**Security & Asset management**/
-  Future<SDKServiceResponse<Map<String, dynamic>>> createSecuritySubTypeAssetAllocation({Map<String, dynamic>? data, @required String? contact}) async {
-    String endpoint = "${CREATE_SECURITY_SUB_TYPE_ASSET_ALLOCATION}.json?contact=${contact}";
+  Future<SDKServiceResponse<Map<String, dynamic>>> createSecuritySubTypeAssetAllocation({Map<String, dynamic>? data}) async {
+    String endpoint = "${CREATE_SECURITY_SUB_TYPE_ASSET_ALLOCATION}.json";
     FormData formData = FormData.fromMap(data!);
     return _sdkServiceRequest.post(endpoint: endpoint, data: formData);
   }
 
-  Future<SDKServiceResponse<Map<String, dynamic>>> etSecurityFlow(String? security) async {
+  Future<SDKServiceResponse<Map<String, dynamic>>> etSecurityFlow({String? security, String? contact}) async {
     String endpoint = "${SECURITY_FLOWS}.json?security=${security}";
-    return _sdkServiceRequest.get(endpoint: endpoint,);
+    final queryParameters = {
+      'contact': contact,
+    };
+    return _sdkServiceRequest.get(endpoint: endpoint, queryParameters: queryParameters);
   }
 
   Future<SDKServiceResponse<Map<String, dynamic>>> createSecurityAssetAllocation({Map<String, dynamic>? data}) async {
@@ -286,8 +333,8 @@ class SoupMarketSDK {
     return _sdkServiceRequest.get(endpoint: endpoint,);
   }
 
-  Future<SDKServiceResponse<Map<String, dynamic>>> saveClientBankDetails({Map<String, dynamic>? data, @required String? contact}) async {
-    String endpoint = "${SAVE_CLIENT_BANK_DETAILS}.json?contact=${contact}";
+  Future<SDKServiceResponse<Map<String, dynamic>>> saveClientBankDetails({Map<String, dynamic>? data}) async {
+    String endpoint = "${SAVE_CLIENT_BANK_DETAILS}.json";
     FormData formData = FormData.fromMap(data!);
     return _sdkServiceRequest.post(endpoint: endpoint, data: formData);
   }
@@ -295,6 +342,7 @@ class SoupMarketSDK {
   Future<SDKServiceResponse<Map<String, dynamic>>> updateClientBankDetails({Map<String, dynamic>? data, @required String? id}) async {
     String endpoint = "${UPDATE_CLIENT_BANK_DETAILS}.json?id=${id}";
     FormData formData = FormData.fromMap(data!);
+    formData.fields.add(MapEntry("id", id!));
     return _sdkServiceRequest.put(endpoint: endpoint, data: formData);
   }
 }
