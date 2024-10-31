@@ -36,6 +36,9 @@ class SDKServiceRequest {
         'Content-Type': 'application/json',
         ...?headers,
       },
+      validateStatus: (status) {
+        return status! >= 100 && status < 2999; // Accept this status codes in the range 100-2999
+      },
     );
 
     // Add interceptors
