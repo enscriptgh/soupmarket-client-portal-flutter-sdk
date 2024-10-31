@@ -16,7 +16,8 @@ class SoupMarketSDK {
     _config = config;
     _sdkServiceRequest = SDKServiceRequest()
       ..initialize(
-        baseUrl: config.environment.baseUrl,
+        // baseUrl: config.environment.baseUrl,
+        baseUrl: config.baseUrl,
         apiKey: config.apiKey,
         apiSecret: config.apiSecret,
         headers: config.additionalHeaders,
