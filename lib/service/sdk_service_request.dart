@@ -65,7 +65,7 @@ class SDKServiceRequest {
       final response = await dio.get(
         endpoint,
         queryParameters: queryParameters,
-        options: Options(headers: headers),
+        // options: Options(headers: headers),
       );
       return SDKServiceResponse.success(data: response.data as T);
     } catch (e) {
@@ -85,7 +85,7 @@ class SDKServiceRequest {
         endpoint,
         data: data,
         queryParameters: queryParameters,
-        options: Options(headers: headers),
+        // options: Options(headers: headers),
       );
       return SDKServiceResponse.success(data: response.data as T);
     } catch (e) {
@@ -104,7 +104,7 @@ class SDKServiceRequest {
         endpoint,
         data: data,
         queryParameters: queryParameters,
-        options: Options(headers: headers),
+        // options: Options(headers: headers),
       );
       return SDKServiceResponse.success(data: response.data as T);
     } catch (e) {
@@ -121,7 +121,7 @@ class SDKServiceRequest {
       final response = await dio.delete(
         endpoint,
         queryParameters: queryParameters,
-        options: Options(headers: headers),
+        // options: Options(headers: headers),
       );
       return SDKServiceResponse.success(data: response.data as T);
     } catch (e) {
