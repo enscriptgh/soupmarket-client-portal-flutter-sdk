@@ -2,7 +2,7 @@ class SoupMarketConfig {
   final String apiKey;
   final String apiSecret;
   final String baseUrl;
-  final Environment environment;
+  // final Environment environment;
   final Duration timeout;
   final Map<String, dynamic>? additionalHeaders;
 
@@ -10,7 +10,7 @@ class SoupMarketConfig {
     required this.apiKey,
     required this.apiSecret,
     this.baseUrl = 'https://demo.soupmarkets.com',
-    this.environment = Environment.sandbox,
+    // this.environment = Environment.sandbox,
     this.timeout = const Duration(seconds: 30),
     this.additionalHeaders,
   });
