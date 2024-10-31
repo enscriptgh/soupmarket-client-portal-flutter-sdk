@@ -63,3 +63,12 @@ final String LOAD_ANNUAL_TURN_OVER = "/annualTurnOver/index";
 
 final String SAVE_CLIENT_BANK_DETAILS = "/clientBankDetails/save";
 final String UPDATE_CLIENT_BANK_DETAILS = "/clientBankDetails/update/";
+
+//Reports Downloads
+final String DOWNLOAD_CUSTODY_STATEMENT = "/tradeReports/custodyStatement.pdf";
+final String DWONLOAD_TRANSACTION_STATEMENT = "/tradeReports/transactionStatement.pdf";
+
+//Emergency Contact
+final String SHOW_CLIENT_EMERGENCY_CONTACT = "/clientEmergencyContact/show";
+final String SAVE_CLIENT_EMERGENCY_CONTACT = "/clientEmergencyContact/save";
+final String UPDATE_CLIENT_EMERGENCY_CONTACT = "/clientEmergencyContact/update";
