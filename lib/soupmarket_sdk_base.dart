@@ -28,7 +28,7 @@ class SoupMarketSDK {
   Future<SDKServiceResponse<Map<String, dynamic>>> clientRegister({Map<String, dynamic>? map}) async {
     FormData formData = FormData.fromMap(map!);
     return _sdkServiceRequest.post<Map<String, dynamic>>(
-      endpoint: CLIENT_REGISTER,
+      endpoint: "${CLIENT_REGISTER}.json",
       data: formData
     );
   }
