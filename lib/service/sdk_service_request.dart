@@ -59,13 +59,13 @@ class SDKServiceRequest {
   Future<SDKServiceResponse<T>> get<T>({
     required String endpoint,
     Map<String, dynamic>? queryParameters,
-    // Map<String, dynamic>? headers,
+    Map<String, dynamic>? headers,
   }) async {
     try {
       final response = await dio.get(
         endpoint,
         queryParameters: queryParameters,
-        // options: Options(headers: headers),
+        options: Options(headers: headers),
       );
       return SDKServiceResponse.success(data: response.data as T);
     } catch (e) {
@@ -78,14 +78,14 @@ class SDKServiceRequest {
     // dynamic data,
   FormData? data,
     Map<String, dynamic>? queryParameters,
-    // Map<String, dynamic>? headers,
+    Map<String, dynamic>? headers,
   }) async {
     try {
       final response = await dio.post(
         endpoint,
         data: data,
         queryParameters: queryParameters,
-        // options: Options(headers: headers),
+        options: Options(headers: headers),
       );
       return SDKServiceResponse.success(data: response.data as T);
     } catch (e) {
@@ -97,14 +97,14 @@ class SDKServiceRequest {
     required String endpoint,
     dynamic data,
     Map<String, dynamic>? queryParameters,
-    // Map<String, dynamic>? headers,
+    Map<String, dynamic>? headers,
   }) async {
     try {
       final response = await dio.put(
         endpoint,
         data: data,
         queryParameters: queryParameters,
-        // options: Options(headers: headers),
+        options: Options(headers: headers),
       );
       return SDKServiceResponse.success(data: response.data as T);
     } catch (e) {
@@ -121,7 +121,7 @@ class SDKServiceRequest {
       final response = await dio.delete(
         endpoint,
         queryParameters: queryParameters,
-        // options: Options(headers: headers),
+        options: Options(headers: headers),
       );
       return SDKServiceResponse.success(data: response.data as T);
     } catch (e) {
