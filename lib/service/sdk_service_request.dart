@@ -34,6 +34,7 @@ class SDKServiceRequest {
       headers: {
         'Authorization': basicAuthCredentials,
         'Content-Type': 'application/json',
+        'Accept': 'application/json',
         ...?headers,
       },
       validateStatus: (status) {
@@ -62,6 +63,7 @@ class SDKServiceRequest {
     Map<String, dynamic>? headers,
   }) async {
     try {
+
       final response = await dio.get(
         endpoint,
         queryParameters: queryParameters,
