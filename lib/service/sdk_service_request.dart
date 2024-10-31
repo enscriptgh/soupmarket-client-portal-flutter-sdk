@@ -59,7 +59,7 @@ class SDKServiceRequest {
   Future<SDKServiceResponse<T>> get<T>({
     required String endpoint,
     Map<String, dynamic>? queryParameters,
-    Map<String, dynamic>? headers,
+    // Map<String, dynamic>? headers,
   }) async {
     try {
       final response = await dio.get(
@@ -78,7 +78,7 @@ class SDKServiceRequest {
     // dynamic data,
   FormData? data,
     Map<String, dynamic>? queryParameters,
-    Map<String, dynamic>? headers,
+    // Map<String, dynamic>? headers,
   }) async {
     try {
       final response = await dio.post(
@@ -97,7 +97,7 @@ class SDKServiceRequest {
     required String endpoint,
     dynamic data,
     Map<String, dynamic>? queryParameters,
-    Map<String, dynamic>? headers,
+    // Map<String, dynamic>? headers,
   }) async {
     try {
       final response = await dio.put(
