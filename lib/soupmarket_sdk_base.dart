@@ -421,10 +421,20 @@ class SoupMarketSDK {
     return _sdkServiceRequest.post(endpoint: endpoint, data: formData);
   }
 
-  Future<SDKServiceResponse<Map<String, dynamic>>> loadAllRiskAssessmentQuestions({String? contact}) async {
+  Future<SDKServiceResponse<Map<String, dynamic>>> loadAllRiskAssessmentQuestions({String? contact, Map<String, dynamic>? filter}) async {
     String endpoint = "${LOAD_ALL_RISK_ASSESSMENT_QUESTIONS}.json";
     final queryParameters = {
       'contact': contact,
+      ...?filter
+    };
+    return _sdkServiceRequest.get(endpoint: endpoint, queryParameters: queryParameters);
+  }
+
+  Future<SDKServiceResponse<Map<String, dynamic>>> loadAllRiskAssessmentAnswers({String? contact, Map<String, dynamic>? filter}) async {
+    String endpoint = "${LOAD_ALL_RISK_ASSESSMENT_ANSWERS}.json";
+    final queryParameters = {
+      'contact': contact,
+      ...?filter
     };
     return _sdkServiceRequest.get(endpoint: endpoint, queryParameters: queryParameters);
   }
