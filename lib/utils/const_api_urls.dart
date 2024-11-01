@@ -30,6 +30,10 @@ final String INDIVIDUAL_NEXT_OF_KIN_INFORMATION_SHOW = "/individualNextOfKin/sho
 final String INDIVIDUAL_NEXT_OF_KIN_INFORMATION_SAVE = "/individualNextOfKin/save";
 final String INDIVIDUAL_NEXT_OF_KIN_INFORMATION_UPDATE = "/individualNextOfKin/update";
 
+final String INDIVIDUAL_RISK_ASSESSMENT_SHOW = "/individualRiskAssessment/show/";
+final String INDIVIDUAL_RISK_ASSESSMENT_SAVE = "/individualRiskAssessment/save";
+final String INDIVIDUAL_RISK_ASSESSMENT_UPDATE = "/individualRiskAssessment/update";
+
 // TRADING
 final String FUND_UNDER_MANAGEMENT = "/security/index.json?enableFundManagement=true";
 final String ORDER_REQUEST_STATUS = "/client/orderRequestStatus/";
@@ -50,7 +54,7 @@ final String CREATE_PIN_RESET = "/client/createPin.json?contact=";
 
 //Security & Asset Aloocation
 final String CREATE_SECURITY_SUB_TYPE_ASSET_ALLOCATION = "/client/createSecuritySubTypeAssetAllocation";
-final String SECURITY_FLOWS = "/flow/index.json?security=";
+final String SECURITY_FLOWS = "/flow/index";
 final String SECURITY_ASSET_ALLOCATION = "/client/createSecurityAssetAllocation";
 
 final String SEND_SMS_MESSAGE = "/sendMessage/sendSms.json?smsNumber=";
@@ -64,11 +68,14 @@ final String LOAD_ANNUAL_TURN_OVER = "/annualTurnOver/index";
 final String SAVE_CLIENT_BANK_DETAILS = "/clientBankDetails/save";
 final String UPDATE_CLIENT_BANK_DETAILS = "/clientBankDetails/update/";
 
-//Reports Downloads
-final String DOWNLOAD_CUSTODY_STATEMENT = "/tradeReports/custodyStatement.pdf";
-final String DWONLOAD_TRANSACTION_STATEMENT = "/tradeReports/transactionStatement.pdf";
+//Downloadable Reports
+final String CUSTODY_STATEMENT = "/tradeReports/custodyStatement";
+final String TRANSACTION_STATEMENT = "/tradeReports/transactionStatement";
+final String DOWNLOAD_LINK_SOUPLINK = "/soupBrokerFile/link";
 
 //Emergency Contact
 final String SHOW_CLIENT_EMERGENCY_CONTACT = "/clientEmergencyContact/show";
 final String SAVE_CLIENT_EMERGENCY_CONTACT = "/clientEmergencyContact/save";
 final String UPDATE_CLIENT_EMERGENCY_CONTACT = "/clientEmergencyContact/update";
+
+final String LOAD_ALL_RISK_ASSESSMENT_QUESTIONS = "/riskAssessmentQuestion/index";
