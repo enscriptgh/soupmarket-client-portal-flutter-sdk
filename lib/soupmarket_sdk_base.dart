@@ -25,6 +25,12 @@ class SoupMarketSDK {
       );
   }
 
+  Future<SDKServiceResponse<Map<String, dynamic>>> authenticate({Map<String, dynamic>? data}) async {
+    String endpoint = CLIENT_AUTHENTICATE+".json";
+    FormData formData = FormData.fromMap(data!);
+    return _sdkServiceRequest.post(endpoint: endpoint, data: formData);
+  }
+
   Future<SDKServiceResponse<Map<String, dynamic>>> saveClientRegister({Map<String, dynamic>? map}) async {
     FormData formData = FormData.fromMap(map!);
     return _sdkServiceRequest.post<Map<String, dynamic>>(

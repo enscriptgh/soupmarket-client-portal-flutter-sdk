@@ -1,3 +1,5 @@
+final String CLIENT_AUTHENTICATE = "/client/authenticate";
+
 final String CLIENT_REGISTER = "/client/register";
 final String CLIENT_ACCOUNT_SERVICE = "/client/accountServices.json?contact=";
 final String SEARCH_PIN_RESET_QUESTION = "/pinResetQuestion/index";
