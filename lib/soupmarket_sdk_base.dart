@@ -71,9 +71,10 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<Map<String, dynamic>>> getAllIndividualList({String? id, String? contact}) async {
-    String endpoint = ALL_INDIVIDUAL+"${id}.json";
+    String endpoint = "${ALL_INDIVIDUAL}.json";
     final queryParameters = {
       'contact': contact,
+      'id': id,
     };
     return _sdkServiceRequest.get(endpoint: endpoint, queryParameters: queryParameters);
   }

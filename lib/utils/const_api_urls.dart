@@ -6,7 +6,7 @@ final String SEARCH_PIN_RESET_QUESTION = "/pinResetQuestion/index";
 final String PIN_RESET_QUESTION = "/client/accountServices";
 
 //KYC
-final String ALL_INDIVIDUAL = "/client/individualList.json?contact=";
+final String ALL_INDIVIDUAL = "/client/individualList";
 
 final String INDIVIDUAL_BASIC_INFORMATION_SHOW = "/individualBasicInformation/show/";
 final String INDIVIDUAL_BASIC_INFORMATION_SAVE = "/individualBasicInformation/save";
