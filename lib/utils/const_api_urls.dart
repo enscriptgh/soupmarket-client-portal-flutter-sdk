@@ -37,7 +37,7 @@ final String INDIVIDUAL_RISK_ASSESSMENT_SAVE = "/individualRiskAssessment/save";
 final String INDIVIDUAL_RISK_ASSESSMENT_UPDATE = "/individualRiskAssessment/update";
 
 // TRADING
-final String FUND_UNDER_MANAGEMENT = "/security/index.json?enableFundManagement=true";
+final String FUND_UNDER_MANAGEMENT = "/security/index";
 final String ORDER_REQUEST_STATUS = "/client/orderRequestStatus/";
 
 final String CREATE_ORDER_REQUEST = "/client/orderRequest";
