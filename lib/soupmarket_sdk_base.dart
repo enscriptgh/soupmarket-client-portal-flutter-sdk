@@ -44,7 +44,7 @@ class SoupMarketSDK {
       'contact': contact,
     };
     return _sdkServiceRequest.get<Map<String, dynamic>>(
-      endpoint: "${CLIENT_ACCOUNT_SERVICE+contact!}.json",
+      endpoint: "${CLIENT_ACCOUNT_SERVICE}.json",
       queryParameters: queryParameters
     );
   }
