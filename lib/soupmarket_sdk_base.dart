@@ -213,7 +213,8 @@ class SoupMarketSDK {
 
   ////////////////////////Order Management//////////////
 
-  Future<SDKServiceResponse<Map<String, dynamic>>> fundsUnderManagement({String? contact, Map<String, dynamic>? filter}) async {
+  // Future<SDKServiceResponse<Map<String, dynamic>>> fundsUnderManagement({String? contact, Map<String, dynamic>? filter}) async {
+  Future<SDKServiceResponse<dynamic>> fundsUnderManagement({String? contact, Map<String, dynamic>? filter}) async {
     String endpoint = "${FUND_UNDER_MANAGEMENT}.json";
     final queryParameters = {
       'contact': contact,
