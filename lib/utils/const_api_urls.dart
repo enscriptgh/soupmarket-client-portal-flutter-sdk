@@ -10,31 +10,31 @@ final String ALL_INDIVIDUAL = "/client/individualList";
 
 final String INDIVIDUAL_BASIC_INFORMATION_SHOW = "/individualBasicInformation/show/";
 final String INDIVIDUAL_BASIC_INFORMATION_SAVE = "/individualBasicInformation/save";
-final String INDIVIDUAL_BASIC_INFORMATION_UPDATE = "/individualBasicInformation/update";
+final String INDIVIDUAL_BASIC_INFORMATION_UPDATE = "/individualBasicInformation/update/";
 
 final String INDIVIDUAL_IDENTITY_INFORMATION_SHOW = "/individualIdentityInformation/show/";
 final String INDIVIDUAL_IDENTITY_INFORMATION_SAVE = "/individualIdentityInformation/save";
-final String INDIVIDUAL_IDENTITY_INFORMATION_UPDATE = "/individualIdentityInformation/update";
+final String INDIVIDUAL_IDENTITY_INFORMATION_UPDATE = "/individualIdentityInformation/update/";
 
 final String INDIVIDUAL_ADDRESS_INFORMATION_SHOW = "/individualAddressInformation/show/";
 final String INDIVIDUAL_ADDRESS_INFORMATION_SAVE = "/individualIdentityInformation/save";
-final String INDIVIDUAL_ADDRESS_INFORMATION_UPDATE = "/individualIdentityInformation/update";
+final String INDIVIDUAL_ADDRESS_INFORMATION_UPDATE = "/individualIdentityInformation/update/";
 
 final String INDIVIDUAL_EMPLOYMENT_INFORMATION_SHOW = "/individualEmploymentInformation/show/";
 final String INDIVIDUAL_EMPLOYMENT_INFORMATION_SAVE = "/individualEmploymentInformation/save";
-final String INDIVIDUAL_EMPLOYMENT_INFORMATION_UPDATE = "/individualEmploymentInformation/update";
+final String INDIVIDUAL_EMPLOYMENT_INFORMATION_UPDATE = "/individualEmploymentInformation/update/";
 
 final String INDIVIDUAL_USA_FATCA_INFORMATION_SHOW = "/individualUSA_FATCA_ComplianceInformation/show/";
 final String INDIVIDUAL_USA_FATCA_INFORMATION_SAVE = "/individualUSA_FATCA_ComplianceInformation/save";
-final String INDIVIDUAL_USA_FATCA_INFORMATION_UPDATE = "/individualUSA_FATCA_ComplianceInformation/update";
+final String INDIVIDUAL_USA_FATCA_INFORMATION_UPDATE = "/individualUSA_FATCA_ComplianceInformation/update/";
 
 final String INDIVIDUAL_NEXT_OF_KIN_INFORMATION_SHOW = "/individualNextOfKin/show/";
 final String INDIVIDUAL_NEXT_OF_KIN_INFORMATION_SAVE = "/individualNextOfKin/save";
-final String INDIVIDUAL_NEXT_OF_KIN_INFORMATION_UPDATE = "/individualNextOfKin/update";
+final String INDIVIDUAL_NEXT_OF_KIN_INFORMATION_UPDATE = "/individualNextOfKin/update/";
 
 final String INDIVIDUAL_RISK_ASSESSMENT_SHOW = "/individualRiskAssessment/show/";
 final String INDIVIDUAL_RISK_ASSESSMENT_SAVE = "/individualRiskAssessment/save";
-final String INDIVIDUAL_RISK_ASSESSMENT_UPDATE = "/individualRiskAssessment/update";
+final String INDIVIDUAL_RISK_ASSESSMENT_UPDATE = "/individualRiskAssessment/update/";
 
 // TRADING
 final String FUND_UNDER_MANAGEMENT = "/security/index";
@@ -68,7 +68,7 @@ final String LOAD_ENUM_UTILITIES = "/enumUtility/index";
 final String LOAD_ANNUAL_TURN_OVER = "/annualTurnOver/index";
 
 final String SAVE_CLIENT_BANK_DETAILS = "/clientBankDetails/save";
-final String UPDATE_CLIENT_BANK_DETAILS = "/clientBankDetails/update";
+final String UPDATE_CLIENT_BANK_DETAILS = "/clientBankDetails/update/";
 
 //Downloadable Reports
 final String CUSTODY_STATEMENT = "/tradeReports/custodyStatement";
@@ -78,7 +78,7 @@ final String DOWNLOAD_LINK_SOUPLINK = "/soupBrokerFile/link";
 //Emergency Contact
 final String SHOW_CLIENT_EMERGENCY_CONTACT = "/clientEmergencyContact/show";
 final String SAVE_CLIENT_EMERGENCY_CONTACT = "/clientEmergencyContact/save";
-final String UPDATE_CLIENT_EMERGENCY_CONTACT = "/clientEmergencyContact/update";
+final String UPDATE_CLIENT_EMERGENCY_CONTACT = "/clientEmergencyContact/update/";
 
 final String LOAD_ALL_RISK_ASSESSMENT_QUESTIONS = "/riskAssessmentQuestion/index";
 final String LOAD_ALL_RISK_ASSESSMENT_ANSWERS = "/riskAssessmentAnswer/index";
