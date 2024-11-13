@@ -17,8 +17,8 @@ final String INDIVIDUAL_IDENTITY_INFORMATION_SAVE = "/individualIdentityInformat
 final String INDIVIDUAL_IDENTITY_INFORMATION_UPDATE = "/individualIdentityInformation/update/";
 
 final String INDIVIDUAL_ADDRESS_INFORMATION_SHOW = "/individualAddressInformation/show/";
-final String INDIVIDUAL_ADDRESS_INFORMATION_SAVE = "/individualIdentityInformation/save";
-final String INDIVIDUAL_ADDRESS_INFORMATION_UPDATE = "/individualIdentityInformation/update/";
+final String INDIVIDUAL_ADDRESS_INFORMATION_SAVE = "/individualAddressInformation/save";
+final String INDIVIDUAL_ADDRESS_INFORMATION_UPDATE = "/individualAddressInformation/update/";
 
 final String INDIVIDUAL_EMPLOYMENT_INFORMATION_SHOW = "/individualEmploymentInformation/show/";
 final String INDIVIDUAL_EMPLOYMENT_INFORMATION_SAVE = "/individualEmploymentInformation/save";
