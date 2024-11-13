@@ -76,7 +76,7 @@ final String TRANSACTION_STATEMENT = "/tradeReports/transactionStatement";
 final String DOWNLOAD_LINK_SOUPLINK = "/soupBrokerFile/link";
 
 //Emergency Contact
-final String SHOW_CLIENT_EMERGENCY_CONTACT = "/clientEmergencyContact/show";
+final String SHOW_CLIENT_EMERGENCY_CONTACT = "/clientEmergencyContact/show/";
 final String SAVE_CLIENT_EMERGENCY_CONTACT = "/clientEmergencyContact/save";
 final String UPDATE_CLIENT_EMERGENCY_CONTACT = "/clientEmergencyContact/update/";
 
