@@ -409,8 +409,8 @@ class SoupMarketSDK {
     return _sdkServiceRequest.get(endpoint: endpoint, queryParameters: queryParameters);
   }
 
-  Future<SDKServiceResponse<dynamic>> showClientEmergencyContact({String? contact}) async {
-    String endpoint = "${SHOW_CLIENT_EMERGENCY_CONTACT}.json";
+  Future<SDKServiceResponse<dynamic>> showClientEmergencyContact({String? id, String? contact}) async {
+    String endpoint = "${SHOW_CLIENT_EMERGENCY_CONTACT}$id.json";
     final queryParameters = {
       'contact': contact,
     };
