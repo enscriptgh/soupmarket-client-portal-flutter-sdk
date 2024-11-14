@@ -80,12 +80,13 @@ class SDKServiceRequest {
   Future<SDKServiceResponse<T>> download<T>({
     required String endpoint,
     required String savePath,
-    Map<String, dynamic>? headers,
+    Map<String, dynamic>? params,
   }) async {
     try {
       final response = await dio.download(
         endpoint,
         savePath,
+        queryParameters: params
         // options: Options(headers: headers),
       );
       return SDKServiceResponse.success(data: response.data as T);
