@@ -406,16 +406,24 @@ class SoupMarketSDK {
       'contact': contact,
       ...?filter
     };
+    endpoint = generateUrlWithParams(endpoint, queryParameters);
     return _sdkServiceRequest.download(endpoint: endpoint, savePath: saveLocation!);
   }
 
-  Future<SDKServiceResponse<dynamic>> downloadTransactionStatement({Map<String, dynamic>? filter, @required String? contact}) async {
+  String generateUrlWithParams(String baseUrl, Map<String, dynamic> params) {
+    Uri uri = Uri.parse(baseUrl);
+    Uri updatedUri = uri.replace(queryParameters: params.map((key, value) => MapEntry(key, value.toString())));
+    return updatedUri.toString();
+  }
+
+  Future<SDKServiceResponse<dynamic>> downloadTransactionStatement({Map<String, dynamic>? filter, @required String? contact, @required String? saveLocation}) async {
     String endpoint = "${TRANSACTION_STATEMENT}.pdf";
     final queryParameters = {
       'contact': contact,
       ...?filter
     };
-    return _sdkServiceRequest.get(endpoint: endpoint, queryParameters: queryParameters);
+    endpoint = generateUrlWithParams(endpoint, queryParameters);
+    return _sdkServiceRequest.download(endpoint: endpoint, savePath: saveLocation!);
   }
 
   Future<SDKServiceResponse<dynamic>> downloadSoupLink({Map<String, dynamic>? filter, @required String? contact}) async {
