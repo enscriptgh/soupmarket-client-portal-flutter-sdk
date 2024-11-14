@@ -86,7 +86,7 @@ class SDKServiceRequest {
       final response = await dio.download(
         endpoint,
         savePath,
-        options: Options(headers: headers),
+        // options: Options(headers: headers),
       );
       return SDKServiceResponse.success(data: response.data as T);
     } catch (e) {
