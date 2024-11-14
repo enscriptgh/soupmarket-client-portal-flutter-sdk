@@ -400,6 +400,24 @@ class SoupMarketSDK {
     return _sdkServiceRequest.get(endpoint: endpoint, queryParameters: queryParameters);
   }
 
+  Future<SDKServiceResponse<dynamic>> downlaodCustodyStatement({Map<String, dynamic>? filter, @required String? contact}) async {
+    String endpoint = "${CUSTODY_STATEMENT}.pdf";
+    final queryParameters = {
+      'contact': contact,
+      ...?filter
+    };
+    return _sdkServiceRequest.get(endpoint: endpoint, queryParameters: queryParameters);
+  }
+
+  Future<SDKServiceResponse<dynamic>> downloadTransactionStatement({Map<String, dynamic>? filter, @required String? contact}) async {
+    String endpoint = "${TRANSACTION_STATEMENT}.pdf";
+    final queryParameters = {
+      'contact': contact,
+      ...?filter
+    };
+    return _sdkServiceRequest.get(endpoint: endpoint, queryParameters: queryParameters);
+  }
+
   Future<SDKServiceResponse<dynamic>> downloadSoupLink({Map<String, dynamic>? filter, @required String? contact}) async {
     String endpoint = "${DOWNLOAD_LINK_SOUPLINK}.json";
     final queryParameters = {
