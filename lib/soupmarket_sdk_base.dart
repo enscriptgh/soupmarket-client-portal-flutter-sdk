@@ -400,7 +400,7 @@ class SoupMarketSDK {
     return _sdkServiceRequest.get(endpoint: endpoint, queryParameters: queryParameters);
   }
 
-  Future<SDKServiceResponse<dynamic>> downlaodCustodyStatement({Map<String, dynamic>? filter, @required String? contact}) async {
+  Future<SDKServiceResponse<dynamic>> downloadCustodyStatement({Map<String, dynamic>? filter, @required String? contact}) async {
     String endpoint = "${CUSTODY_STATEMENT}.pdf";
     final queryParameters = {
       'contact': contact,
