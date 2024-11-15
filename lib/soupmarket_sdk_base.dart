@@ -469,7 +469,7 @@ class SoupMarketSDK {
     return _sdkServiceRequest.post(endpoint: endpoint, data: formData);
   }
 
-  Future<SDKServiceResponse<dynamic>> updateIindividualBeneficiary({Map<String, dynamic>? data, @required String? id}) async {
+  Future<SDKServiceResponse<dynamic>> updateIndividualBeneficiary({Map<String, dynamic>? data, @required String? id}) async {
     String endpoint = "${INDIVIDUAL_BENEFICIARY_UPDATE}/${id}.json";
     FormData formData = FormData.fromMap(data!);
     return _sdkServiceRequest.post(endpoint: endpoint, data: formData);
