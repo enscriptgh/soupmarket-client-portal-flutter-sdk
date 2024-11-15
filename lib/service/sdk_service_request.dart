@@ -81,13 +81,14 @@ class SDKServiceRequest {
     required String endpoint,
     required String savePath,
     Map<String, dynamic>? params,
+    Map<String, dynamic>? headers,
   }) async {
     try {
       final response = await dio.download(
         endpoint,
         savePath,
-        queryParameters: params
-        // options: Options(headers: headers),
+        queryParameters: params,
+        options: Options(headers: headers),
       );
       return SDKServiceResponse.success(data: response.data as T);
     } catch (e) {
