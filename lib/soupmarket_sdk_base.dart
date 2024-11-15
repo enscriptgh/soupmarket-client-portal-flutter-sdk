@@ -493,4 +493,14 @@ class SoupMarketSDK {
     return _sdkServiceRequest.get(endpoint: endpoint, queryParameters: queryParameters);
   }
 
+
+  Future<SDKServiceResponse<dynamic>> loadAllIdentityTypes({String? contact, Map<String, dynamic>? filter}) async {
+    String endpoint = "${LOAD_ALL_IDENTITY_TYPES}.json";
+    final queryParameters = {
+      'contact': contact,
+      ...?filter
+    };
+    return _sdkServiceRequest.get(endpoint: endpoint, queryParameters: queryParameters);
+  }
+
 }
