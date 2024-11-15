@@ -400,14 +400,14 @@ class SoupMarketSDK {
     return _sdkServiceRequest.get(endpoint: endpoint, queryParameters: queryParameters);
   }
 
-  Future<SDKServiceResponse<dynamic>> downloadCustodyStatement({Map<String, dynamic>? filter, @required String? contact, @required String? saveLocation}) async {
+  Future<SDKServiceResponse<dynamic>> downloadCustodyStatement({Map<String, dynamic>? filter, @required String? contact, @required String? saveLocation, Map<String, dynamic>? headers}) async {
     String endpoint = "${CUSTODY_STATEMENT}.pdf";
     final queryParameters = {
       'contact': contact,
       ...?filter
     };
     endpoint = generateUrlWithParams(endpoint, queryParameters);
-    return _sdkServiceRequest.download(endpoint: endpoint, savePath: saveLocation!);
+    return _sdkServiceRequest.download(endpoint: endpoint, savePath: saveLocation!, headers: headers);
   }
 
   String generateUrlWithParams(String baseUrl, Map<String, dynamic> params) {
@@ -416,17 +416,17 @@ class SoupMarketSDK {
     return updatedUri.toString();
   }
 
-  Future<SDKServiceResponse<dynamic>> downloadTransactionStatement({Map<String, dynamic>? filter, @required String? contact, @required String? saveLocation}) async {
+  Future<SDKServiceResponse<dynamic>> downloadTransactionStatement({Map<String, dynamic>? filter, @required String? contact, @required String? saveLocation, Map<String, dynamic>? headers}) async {
     String endpoint = "${TRANSACTION_STATEMENT}.pdf";
     final queryParameters = {
       'contact': contact,
       ...?filter
     };
     endpoint = generateUrlWithParams(endpoint, queryParameters);
-    return _sdkServiceRequest.download(endpoint: endpoint, savePath: saveLocation!);
+    return _sdkServiceRequest.download(endpoint: endpoint, savePath: saveLocation!, headers: headers);
   }
 
-  Future<SDKServiceResponse<dynamic>> downloadSoupLink({Map<String, dynamic>? filter, @required String? contact}) async {
+  Future<SDKServiceResponse<dynamic>> downloadSoupLink({Map<String, dynamic>? filter, @required String? contact, Map<String, dynamic>? headers}) async {
     String endpoint = "${DOWNLOAD_LINK_SOUPLINK}.json";
     final queryParameters = {
       'contact': contact,
