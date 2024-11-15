@@ -87,3 +87,4 @@ final String INDIVIDUAL_BENEFICIARY_UPDATE = "/individualBeneficiary/update/";
 
 final String LOAD_ALL_RISK_ASSESSMENT_QUESTIONS = "/riskAssessmentQuestion/index";
 final String LOAD_ALL_RISK_ASSESSMENT_ANSWERS = "/riskAssessmentAnswer/index";
+final String LOAD_ALL_IDENTITY_TYPES = "/identityType/index";
