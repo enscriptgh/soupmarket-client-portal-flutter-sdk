@@ -452,7 +452,7 @@ class SoupMarketSDK {
   Future<SDKServiceResponse<dynamic>> updateClientEmergencyContact({Map<String, dynamic>? data, @required String? id}) async {
     String endpoint = "${UPDATE_CLIENT_EMERGENCY_CONTACT}/${id}.json";
     FormData formData = FormData.fromMap(data!);
-    return _sdkServiceRequest.post(endpoint: endpoint, data: formData);
+    return _sdkServiceRequest.put(endpoint: endpoint, data: formData);
   }
 
   Future<SDKServiceResponse<dynamic>> showIndividualBeneficiary({String? id, String? contact}) async {
@@ -472,7 +472,7 @@ class SoupMarketSDK {
   Future<SDKServiceResponse<dynamic>> updateIndividualBeneficiary({Map<String, dynamic>? data, @required String? id}) async {
     String endpoint = "${INDIVIDUAL_BENEFICIARY_UPDATE}/${id}.json";
     FormData formData = FormData.fromMap(data!);
-    return _sdkServiceRequest.post(endpoint: endpoint, data: formData);
+    return _sdkServiceRequest.put(endpoint: endpoint, data: formData);
   }
 
   Future<SDKServiceResponse<dynamic>> loadAllRiskAssessmentQuestions({String? contact, Map<String, dynamic>? filter}) async {
