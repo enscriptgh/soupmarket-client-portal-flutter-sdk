@@ -140,7 +140,7 @@ class SDKServiceRequest {
 
       // If we get here, something unexpected happened
       return SDKServiceResponse.error(
-          error: new ServiceError(code:response.statusCode,
+          error: new ServiceError(code:'${response.statusCode}',
               message:'Unexpected response status code: ${response.statusCode},'
                   ' uri: ${response.requestOptions.uri}, data:${response.data as T}')
       );
@@ -192,7 +192,7 @@ class SDKServiceRequest {
 
       // If we get here, something unexpected happened
       return SDKServiceResponse.error(
-          error: new ServiceError(code:response.statusCode,
+          error: new ServiceError(code:'${response.statusCode}',
               message:'Unexpected response status code: ${response.statusCode},'
                   ' uri: ${response.requestOptions.uri}, data:${response.data as T}')
       );
