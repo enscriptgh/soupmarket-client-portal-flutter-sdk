@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 // import 'package:dio/dio.dart' as dio;
 import 'package:dio/dio.dart';
@@ -141,7 +140,7 @@ class SDKServiceRequest {
 
       // If we get here, something unexpected happened
       return SDKServiceResponse.error(
-        error: HttpException('Unexpected response: ${response.statusCode}', uri: response.requestOptions.uri),
+          error: 'Unexpected response status code: ${response.statusCode}, uri: ${response.requestOptions.uri}'
       );
     } catch (e) {
       return SDKServiceResponse.error(error: _handleError(e));
@@ -191,7 +190,7 @@ class SDKServiceRequest {
 
       // If we get here, something unexpected happened
       return SDKServiceResponse.error(
-        error: HttpException('Unexpected response: ${response.statusCode}', uri: response.requestOptions.uri),
+        error: 'Unexpected response status code: ${response.statusCode}, uri: ${response.requestOptions.uri}'
       );
     } catch (e) {
       return SDKServiceResponse.error(error: _handleError(e));
