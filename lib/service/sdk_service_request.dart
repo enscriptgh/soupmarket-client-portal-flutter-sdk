@@ -108,9 +108,43 @@ class SDKServiceRequest {
         endpoint,
         data: data,
         queryParameters: queryParameters,
-        options: Options(headers: headers),
+        options: Options(
+          headers: headers,
+          followRedirects: true,
+          validateStatus: (status) {
+            return status != null && (status >= 200 && status < 400 || status == 302);
+          },
+        ),
       );
-      return SDKServiceResponse.success(data: response.data as T);
+
+      // Handle redirect responses (status code 302)
+      if (response.statusCode == 302) {
+        final redirectUrl = getRedirectUrl(response);
+        if (redirectUrl != null) {
+          // Make a GET request to the redirect URL
+          final redirectResponse = await dio.get(
+            redirectUrl,
+            options: Options(
+              headers: headers,
+              validateStatus: (status) => status != null && status >= 200 && status < 300,
+            ),
+          );
+          return SDKServiceResponse.success(data: redirectResponse.data as T);
+        }
+      }
+
+      // Handle regular success responses
+      if (response.statusCode! >= 200 && response.statusCode! < 300) {
+        return SDKServiceResponse.success(data: response.data as T);
+      }
+
+      // If we get here, something unexpected happened
+      return SDKServiceResponse.error(
+        error: SDKError(
+          message: 'Unexpected response: ${response.statusCode}',
+          statusCode: response.statusCode,
+        ),
+      );
     } catch (e) {
       return SDKServiceResponse.error(error: _handleError(e));
     }
@@ -127,12 +161,59 @@ class SDKServiceRequest {
         endpoint,
         data: data,
         queryParameters: queryParameters,
-        options: Options(headers: headers),
+        options: Options(
+          headers: headers,
+          followRedirects: true,
+          validateStatus: (status) {
+            return status != null && (status >= 200 && status < 400 || status == 302);
+          },
+        ),
       );
-      return SDKServiceResponse.success(data: response.data as T);
+
+      // Handle redirect responses (status code 302)
+      if (response.statusCode == 302) {
+        final redirectUrl = getRedirectUrl(response);
+        if (redirectUrl != null) {
+          // Make a GET request to the redirect URL
+          final redirectResponse = await dio.get(
+            redirectUrl,
+            options: Options(
+              headers: headers,
+              validateStatus: (status) => status != null && status >= 200 && status < 300,
+            ),
+          );
+          return SDKServiceResponse.success(data: redirectResponse.data as T);
+        }
+      }
+
+      // Handle regular success responses
+      if (response.statusCode! >= 200 && response.statusCode! < 300) {
+        return SDKServiceResponse.success(data: response.data as T);
+      }
+
+      // If we get here, something unexpected happened
+      return SDKServiceResponse.error(
+        error: SDKError(
+          message: 'Unexpected response: ${response.statusCode}',
+          statusCode: response.statusCode,
+        ),
+      );
     } catch (e) {
       return SDKServiceResponse.error(error: _handleError(e));
     }
+  }
+  String? getRedirectUrl(Response response) {
+    // Check 'location' header (standard)
+    String? location = response.headers.value('location') ??
+        response.headers.value('Location');
+
+    // If location header exists and is a relative URL, make it absolute
+    if (location != null && !location.startsWith('http')) {
+      final baseUrl = response.requestOptions.baseUrl;
+      location = Uri.parse(baseUrl).resolve(location).toString();
+    }
+
+    return location;
   }
 
   Future<SDKServiceResponse<T>> delete<T>({
