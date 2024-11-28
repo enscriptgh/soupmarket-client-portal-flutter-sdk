@@ -11,7 +11,6 @@ class SoupMarketSDK {
   late final SoupMarketConfig _config;
   late final SDKServiceRequest _sdkServiceRequest;
   late final Environment environment;
-  static bool _isTest = true;
 
   SoupMarketSDK._internal();
 
@@ -42,7 +41,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> saveClientRegister({Map<String, dynamic>? map}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.saveClientRegister
       );
@@ -55,7 +54,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> getClientAccountService({String? contact}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.getClientAccountService
       );
@@ -70,7 +69,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> searchPinResetQuestion({String? searchWord, String? contact}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.searchPinResetQuestion
       );
@@ -88,7 +87,7 @@ class SoupMarketSDK {
   // }
 
   Future<SDKServiceResponse<dynamic>> getIndividualBasicInformation({String? id, String? contact}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.getIndividualBasicInformation
       );
@@ -101,7 +100,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> getAllIndividualList({String? id, String? contact}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.getAllIndividualList
       );
@@ -115,7 +114,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> individualBasicInformationSave({Map<String, dynamic>? data}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.individualBasicInformationSave
       );
@@ -126,7 +125,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> individualBasicInformationUpdate({String? id, Map<String, dynamic>? data}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.individualBasicInformationUpdate
       );
@@ -137,7 +136,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> individualIdentityInformationShow({String? id, String? contact}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.individualIdentityInformationShow
       );
@@ -150,7 +149,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> individualIdentityInformationSave({Map<String, dynamic>? data}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.individualIdentityInformationSave
       );
@@ -161,7 +160,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> individualIdentityInformationUpdate({String? id, Map<String, dynamic>? data}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.individualIdentityInformationUpdate
       );
@@ -172,7 +171,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> individualAddressInformationShow({String? id, String? contact}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.individualAddressInformationShow
       );
@@ -185,7 +184,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> individualAddressInformationSave({Map<String, dynamic>? data}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.individualAddressInformationSave
       );
@@ -196,7 +195,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> individualAddressInformationUpdate({String? id, Map<String, dynamic>? data}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.individualAddressInformationUpdate
       );
@@ -207,7 +206,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> individualEmploymentInformationShow({String? id, String? contact}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.individualEmploymentInformationShow
       );
@@ -220,7 +219,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> individualEmploymentInformationSave({Map<String, dynamic>? data}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.individualEmploymentInformationSave
       );
@@ -231,7 +230,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> individualEmploymentInformationUpdate({String? id, Map<String, dynamic>? data}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.individualEmploymentInformationUpdate
       );
@@ -242,7 +241,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> individuaFatcaInformationShow({String? id, String? contact}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.individuaFatcaInformationShow
       );
@@ -255,7 +254,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> individuaFatcaInformationSave({Map<String, dynamic>? data}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.individuaFatcaInformationSave
       );
@@ -266,7 +265,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> individuaFatcaInformationUpdate({String? id, Map<String, dynamic>? data}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.individuaFatcaInformationUpdate
       );
@@ -277,7 +276,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> individualNextOfKinInformationShow({String? id, String? contact}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.individualNextOfKinInformationShow
       );
@@ -290,7 +289,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> individualNextOfKinInformationSave({Map<String, dynamic>? data}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.individualNextOfKinInformationSave
       );
@@ -301,7 +300,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> individualNextOfKinInformationUpdate({String? id, Map<String, dynamic>? data}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.individualNextOfKinInformationUpdate
       );
@@ -312,7 +311,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> individualRiskAssessmentShow({String? id, String? contact}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.individualRiskAssessmentShow
       );
@@ -325,7 +324,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> individualRiskAssessmentSave({Map<String, dynamic>? data}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.individualRiskAssessmentSave
       );
@@ -336,7 +335,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> individualRiskAssessmentUpdate({String? id, Map<String, dynamic>? data}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.individualRiskAssessmentUpdate
       );
@@ -350,7 +349,7 @@ class SoupMarketSDK {
 
   // Future<SDKServiceResponse<dynamic>> fundsUnderManagement({String? contact, Map<String, dynamic>? filter}) async {
   Future<SDKServiceResponse<dynamic>> fundsUnderManagement({String? contact, Map<String, dynamic>? filter}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.fundsUnderManagement
       );
@@ -365,7 +364,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> orderRequestStatus({String? id, String? contact}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.orderRequestStatus
       );
@@ -378,7 +377,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> createOrderRequest({Map<String, dynamic>? data}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.createOrderRequest
       );
@@ -389,7 +388,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> custodyStatement({Map<String, dynamic>? data}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.custodyStatement
       );
@@ -400,7 +399,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> orderRequestHistory({Map<String, dynamic>? data}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.orderRequestHistory
       );
@@ -412,7 +411,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> saveAccountServices({Map<String, dynamic>? data}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.saveAccountServices
       );
@@ -423,7 +422,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> updateAccountServices({String? id, Map<String, dynamic>? data}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.updateAccountServices
       );
@@ -435,7 +434,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> checkDepositProcess({@required String? contact}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.checkDepositProcess
       );
@@ -449,7 +448,7 @@ class SoupMarketSDK {
 
   /***PIN MANAGEMENT****/
   Future<SDKServiceResponse<dynamic>> getPinResetQuestions({int max = 100, String? contact}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.getPinResetQuestions
       );
@@ -462,7 +461,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> requestPinReset({required String method, String? contact}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
         data: StaticData.requestPinReset
       );
@@ -475,7 +474,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> savePinReset({Map<String, dynamic>? data}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data: StaticData.savePinReset
       );
@@ -486,7 +485,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> confirmResetPin({Map<String, dynamic>? data}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.confirmResetPin
       );
@@ -497,7 +496,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> changePin({Map<String, dynamic>? data}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.changePin
       );
@@ -508,7 +507,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> createPin({Map<String, dynamic>? data}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.createPin
       );
@@ -520,7 +519,7 @@ class SoupMarketSDK {
 
   /**Security & Asset management**/
   Future<SDKServiceResponse<dynamic>> createSecuritySubTypeAssetAllocation({Map<String, dynamic>? data}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.createSecuritySubTypeAssetAllocation
       );
@@ -531,7 +530,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> getSecurityFlow({String? contact, Map<String, dynamic>? filter}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.getSecurityFlow
       );
@@ -545,7 +544,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> createSecurityAssetAllocation({Map<String, dynamic>? data}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.createSecurityAssetAllocation
       );
@@ -556,7 +555,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> smsNumber({String? smsNumber, String? smsContent}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.smsNumber
       );
@@ -571,7 +570,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> annualGrossIncome({int maxPage = 100}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.annualGrossIncome
       );
@@ -581,7 +580,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> monthlyGrossIncome({int maxPage = 100}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.monthlyGrossIncome
       );
@@ -591,7 +590,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> clientIndustry({int maxPage = 100}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.clientIndustry
       );
@@ -601,7 +600,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> enumUtility({int maxPage = 100}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.enumUtility
       );
@@ -611,7 +610,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> annualTurnOver({int maxPage = 100}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.annualTurnOver
       );
@@ -621,7 +620,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> saveClientBankDetails({Map<String, dynamic>? data}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData. saveClientBankDetails
       );
@@ -632,7 +631,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> updateClientBankDetails({Map<String, dynamic>? data, @required String? id}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.updateClientBankDetails
       );
@@ -644,7 +643,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> getCustodyStatement({Map<String, dynamic>? filter, @required String? contact}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.getCustodyStatement
       );
@@ -658,7 +657,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> getTransactionStatement({Map<String, dynamic>? filter, @required String? contact}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.getTransactionStatement
       );
@@ -672,7 +671,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> downloadCustodyStatement({Map<String, dynamic>? filter, @required String? contact, @required String? saveLocation, Map<String, dynamic>? headers}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.downloadCustodyStatement
       );
@@ -693,7 +692,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> downloadTransactionStatement({Map<String, dynamic>? filter, @required String? contact, @required String? saveLocation, Map<String, dynamic>? headers}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.downloadTransactionStatement
       );
@@ -708,7 +707,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> downloadSoupLink({Map<String, dynamic>? filter, @required String? contact, Map<String, dynamic>? headers}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.downloadSoupLink
       );
@@ -722,7 +721,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> showClientEmergencyContact({String? id, String? contact}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.showClientEmergencyContact
       );
@@ -735,7 +734,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> saveClientEmergencyContact({Map<String, dynamic>? data}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.saveClientEmergencyContact
       );
@@ -746,7 +745,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> updateClientEmergencyContact({Map<String, dynamic>? data, @required String? id}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.updateClientEmergencyContact
       );
@@ -757,7 +756,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> showIndividualBeneficiary({String? id, String? contact}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.showIndividualBeneficiary
       );
@@ -770,7 +769,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> saveIndividualBeneficiary({Map<String, dynamic>? data}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.saveIndividualBeneficiary
       );
@@ -781,7 +780,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> updateIndividualBeneficiary({Map<String, dynamic>? data, @required String? id}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.updateIndividualBeneficiary
       );
@@ -792,7 +791,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> loadAllRiskAssessmentQuestions({String? contact, Map<String, dynamic>? filter}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:{
             //mockData goes here
@@ -808,7 +807,7 @@ class SoupMarketSDK {
   }
 
   Future<SDKServiceResponse<dynamic>> loadAllRiskAssessmentAnswers({String? contact, Map<String, dynamic>? filter}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.loadAllRiskAssessmentAnswers
       );
@@ -823,7 +822,7 @@ class SoupMarketSDK {
 
 
   Future<SDKServiceResponse<dynamic>> loadAllIdentityTypes({String? contact, Map<String, dynamic>? filter}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.loadAllIdentityTypes
       );
