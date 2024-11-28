@@ -21,12 +21,12 @@ enum Environment {
   // sandbox,
   production;
 
-  String get baseUrl {
-    switch (this) {
-      case Environment.sandbox:
-        return 'https://demo.soupmarkets.com';
-      case Environment.production:
-        return 'https://api.soupmarket.com';
-    }
-  }
+  // String get baseUrl {
+  //   switch (this) {
+  //     case Environment.sandbox:
+  //       return 'https://demo.soupmarkets.com';
+  //     case Environment.production:
+  //       return 'https://api.soupmarket.com';
+  //   }
+  // }
 }
