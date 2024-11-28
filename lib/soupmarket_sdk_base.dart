@@ -16,6 +16,7 @@ class SoupMarketSDK {
 
   void initialize(SoupMarketConfig config) {
     _config = config;
+    environment = config.environment;
     _sdkServiceRequest = SDKServiceRequest()
       ..initialize(
         // baseUrl: config.environment.baseUrl,
