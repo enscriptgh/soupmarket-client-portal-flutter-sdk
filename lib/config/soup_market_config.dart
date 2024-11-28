@@ -10,7 +10,7 @@ class SoupMarketConfig {
     required this.apiKey,
     required this.apiSecret,
     this.baseUrl = 'https://demo.soupmarkets.com',
-    // this.environment = Environment.sandbox,
+    this.environment = Environment.test,
     this.timeout = const Duration(seconds: 30),
     this.additionalHeaders,
   });
