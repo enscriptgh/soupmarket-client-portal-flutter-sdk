@@ -23,6 +23,7 @@ class SDKServiceRequest {
     required String baseUrl,
     required String apiKey,
     required String apiSecret,
+    Environment environment = Environment.test,
     Map<String, dynamic>? headers,
     int timeout = 30000,
   }) {
