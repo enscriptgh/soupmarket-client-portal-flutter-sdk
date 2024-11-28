@@ -10,6 +10,7 @@ class SoupMarketSDK {
   static final SoupMarketSDK instance = SoupMarketSDK._internal();
   late final SoupMarketConfig _config;
   late final SDKServiceRequest _sdkServiceRequest;
+  late final Environment environment;
   static bool _isTest = true;
 
   SoupMarketSDK._internal();
@@ -22,17 +23,15 @@ class SoupMarketSDK {
         baseUrl: config.baseUrl,
         apiKey: config.apiKey,
         apiSecret: config.apiSecret,
+        // apiSecret: config.apiSecret,
+        environment: config.environment,
         headers: config.additionalHeaders,
         timeout: config.timeout.inMilliseconds,
       );
   }
 
-  static void setTestMode({bool isTest = true}) {
-    _isTest = isTest;
-  }
-
   Future<SDKServiceResponse<dynamic>> authenticate({Map<String, dynamic>? data}) async {
-    if (_isTest) {
+    if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.authenticate
       );
@@ -406,10 +405,10 @@ class SoupMarketSDK {
           data:StaticData.orderRequestHistory
       );
     }
-    // final queryParameters = { 'fields': currentFillState};
+    final queryParameters = { 'fields': "currentFillState"};
     String endpoint = "${ORDER_REQUEST_HISTORY}.json";
     FormData formData = FormData.fromMap(data!);
-    return _sdkServiceRequest.post(endpoint: endpoint, data: formData);
+    return _sdkServiceRequest.post(endpoint: endpoint, queryParameters: queryParameters, data: formData);
   }
 
   Future<SDKServiceResponse<dynamic>> saveAccountServices({Map<String, dynamic>? data}) async {
