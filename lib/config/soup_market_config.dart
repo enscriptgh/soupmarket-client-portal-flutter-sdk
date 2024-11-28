@@ -17,7 +17,8 @@ class SoupMarketConfig {
 }
 
 enum Environment {
-  sandbox,
+  test,
+  // sandbox,
   production;
 
   String get baseUrl {
