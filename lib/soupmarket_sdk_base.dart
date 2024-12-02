@@ -335,13 +335,13 @@ class SoupMarketSDK {
     return _sdkServiceRequest.post(endpoint: endpoint, data: formData);
   }
 
-  Future<SDKServiceResponse<dynamic>> individualRiskAssessmentUpdate({String? id, Map<String, dynamic>? data}) async {
+  Future<SDKServiceResponse<dynamic>> individualRiskAssessmentUpdate({String? id, Map<String, dynamic>? data, String? contact}) async {
     if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.individualRiskAssessmentUpdate
       );
     }
-    String endpoint = "${INDIVIDUAL_RISK_ASSESSMENT_UPDATE}${id}.json";
+    String endpoint = "${INDIVIDUAL_RISK_ASSESSMENT_UPDATE}${id}.json?contact=$contact";
     FormData formData = FormData.fromMap(data!);
     return _sdkServiceRequest.put(endpoint: endpoint, data: formData);
   }
