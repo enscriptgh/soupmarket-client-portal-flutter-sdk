@@ -18,15 +18,17 @@ class SoupMarketConfig {
 
 enum Environment {
   test,
-  // sandbox,
+  sandbox,
   production;
 
   // String get baseUrl {
   //   switch (this) {
+  //     case Environment.test:
+  //       return '';
   //     case Environment.sandbox:
   //       return 'https://demo.soupmarkets.com';
   //     case Environment.production:
-  //       return 'https://api.soupmarket.com';
+  //       return '';
   //   }
   // }
 }
