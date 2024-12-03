@@ -399,13 +399,13 @@ class SoupMarketSDK {
     return _sdkServiceRequest.post(endpoint: endpoint, data: formData);
   }
 
-  Future<SDKServiceResponse<dynamic>> orderRequestHistory({Map<String, dynamic>? data}) async {
+  Future<SDKServiceResponse<dynamic>> orderRequestHistory({Map<String, dynamic>? data, Map<String, dynamic>? queryParameters}) async {
     if (environment == Environment.test) {
       return SDKServiceResponse.success(
           data:StaticData.orderRequestHistory
       );
     }
-    final queryParameters = { 'fields': "currentFillState, firstTradeTicket"};
+    // queryParameters = { 'fields': "currentFillState, firstTradeTicket.security"};
     String endpoint = "${ORDER_REQUEST_HISTORY}.json";
     FormData formData = FormData.fromMap(data!);
     return _sdkServiceRequest.post(endpoint: endpoint, queryParameters: queryParameters, data: formData);
