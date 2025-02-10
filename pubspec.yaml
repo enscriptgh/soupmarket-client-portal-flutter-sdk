@@ -24,6 +24,9 @@ dev_dependencies:
   json_serializable: ^6.8.0
   mockito: ^5.4.2
   http_mock_adapter: ^0.6.0
+  dio_cache_interceptor: ^3.5.1
+  dio_cache_interceptor_hive_store: ^4.0.0
+  path_provider: ^2.0.5
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
