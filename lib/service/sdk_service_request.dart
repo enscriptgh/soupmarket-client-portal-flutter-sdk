@@ -1,32 +1,45 @@
 import 'dart:async';
+import 'dart:collection';
 import 'dart:convert';
 
 // import 'package:dio/dio.dart' as dio;
 import 'package:dio/dio.dart';
 import 'package:soupmarket_sdk/config/soup_market_config.dart';
 import 'package:soupmarket_sdk/service/sdk_service_response.dart';
-import 'package:soupmarket_sdk/utils/api_exception.dart';
+
+import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
+import 'package:dio_cache_interceptor_hive_store/dio_cache_interceptor_hive_store.dart';
+import 'package:path_provider/path_provider.dart';
 
 class SDKServiceRequest {
   // late final Dio dio;
   late final Dio dio = Dio(); // Ensure dio is initialized
   late final SoupMarketConfig _config;
-
   // Singleton pattern
   static final SDKServiceRequest _instance = SDKServiceRequest._internal();
   factory SDKServiceRequest() => _instance;
 
+  final _requestQueue = Queue<Function>();
+  late Timer _timer;
+  int _requestLimit = 3;
+  int _requestCount = 0;
+  Duration _interval = Duration(seconds: 1);
+  bool enableCaching = false;
+  CacheOptions? cacheOptions;
+
   SDKServiceRequest._internal();
 
   // Initialize SDK
-  void initialize({
+  Future<void> initialize({
     required String baseUrl,
     required String apiKey,
     required String apiSecret,
     Environment environment = Environment.test,
     Map<String, dynamic>? headers,
     int timeout = 30000,
-  }) {
+    bool enableCaching = false,
+  }) async {
+    this.enableCaching = enableCaching;
     String basicAuthCredentials = getBasicAuthToken(apiKey, apiSecret);
     dio.options = BaseOptions(
       baseUrl: baseUrl,
@@ -39,7 +52,7 @@ class SDKServiceRequest {
         ...?headers,
       },
       validateStatus: (status) {
-        return status! >= 100 && status < 2999; // Accept this status codes in the range 100-2999
+        return status! >= 100 && status < 2999; // Accept status codes in the range 100-2999
       },
     );
 
@@ -50,6 +63,42 @@ class SDKServiceRequest {
       error: true,
       requestBody: true,
     ));
+
+    dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) {
+          _requestQueue.add(() {
+            dio.fetch(options).then((response) {
+              handler.resolve(response);
+            }).catchError((error) {
+              handler.reject(error);
+            });
+          });
+          _processQueue();
+        },
+      ),
+    );
+
+    if (enableCaching) {
+      final appDocDir = await getApplicationDocumentsDirectory();
+
+      cacheOptions = CacheOptions(
+        store: BackupCacheStore(
+          primary: MemCacheStore(maxSize: 50), // In-memory cache with max 50 items
+          secondary: HiveCacheStore(appDocDir.path), // Persistent disk-based cache
+        ),
+        policy: CachePolicy.request,
+        hitCacheOnErrorExcept: [401, 403],
+        priority: CachePriority.normal,
+        maxStale: const Duration(days: 7),
+      );
+      dio.interceptors.add(DioCacheInterceptor(options: cacheOptions!));
+    }
+
+    // Initialize the timer to reset the request count
+    _timer = Timer.periodic(_interval, (timer) {
+      _requestCount = 0;
+    });
   }
 
   String getBasicAuthToken(String apiKey, String apiSecret) {
@@ -58,25 +107,33 @@ class SDKServiceRequest {
     return 'Basic $encodedCredentials';
   }
 
+  void _processQueue() {
+    if (_timer == null || !_timer.isActive) {
+      _timer = Timer.periodic(_interval, (timer) {
+        if (_requestQueue.isNotEmpty && _requestCount < _requestLimit) {
+          _requestQueue.removeFirst()();
+          _requestCount++;
+        }
+      });
+    }
+  }
+
   Future<SDKServiceResponse<T>> get<T>({
     required String endpoint,
     Map<String, dynamic>? queryParameters,
     Map<String, dynamic>? headers,
   }) async {
     try {
-
       final response = await dio.get(
         endpoint,
         queryParameters: queryParameters,
-        options: Options(headers: headers),
+        options: Options(headers: headers, extra: cacheOptions?.toExtra(),),
       );
       return SDKServiceResponse.success(data: response.data as T);
     } catch (e) {
       return SDKServiceResponse.error(error: _handleError(e));
     }
   }
-
-
 
   Future<SDKServiceResponse<T>> download<T>({
     required String endpoint,
