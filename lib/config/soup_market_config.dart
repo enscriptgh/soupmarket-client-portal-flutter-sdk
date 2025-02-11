@@ -4,6 +4,7 @@ class SoupMarketConfig {
   final String baseUrl;
   final Environment environment;
   final Duration timeout;
+  final bool enableCaching;
   final Map<String, dynamic>? additionalHeaders;
 
   SoupMarketConfig({
@@ -13,6 +14,7 @@ class SoupMarketConfig {
     this.environment = Environment.test,
     this.timeout = const Duration(seconds: 30),
     this.additionalHeaders,
+    this.enableCaching = false,
   });
 }
 
