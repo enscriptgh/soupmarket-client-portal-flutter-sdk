@@ -132,9 +132,15 @@ class SDKServiceRequest {
     return 'Basic $encodedCredentials';
   }
 
+  // Updated _processQueue method to handle the requests more reliably
   Future<void> _processQueue() async {
-    if (_isProcessing) return;
+    if (_isProcessing) {
+      print('DEBUG: Queue is already processing'); // Debug log
+      return;
+    }
+
     _isProcessing = true;
+    print('DEBUG: Starting queue processing'); // Debug log
 
     try {
       while (_requestQueue.isNotEmpty && _requestCount < _requestLimit) {
@@ -142,34 +148,24 @@ class SDKServiceRequest {
         _requestCount++;
 
         try {
-          print('Processing request: ${request.options.path}');
+          print('DEBUG: Processing queued request: ${request.options.path}'); // Debug log
 
-          Response response;
-          if (request.options.extra.containsKey('savePath')) {
-            // Handle download request
-            response = await dio.download(
-              request.options.path,
-              request.options.extra['savePath'],
-              options: Options(
-                headers: request.options.headers,
-                method: request.options.method,
-              ),
-              queryParameters: request.options.queryParameters,
-            );
-          } else {
-            // Handle regular request
-            response = await dio.fetch(request.options);
+          final response = await dio.fetch(request.options);
+          print('DEBUG: Queue processed response: ${response.statusCode}'); // Debug log
+
+          if (!request.completer.isCompleted) {
+            request.completer.complete(response);
           }
-
-          print('Got response: ${response.statusCode}');
-          request.completer.complete(response);
         } catch (error) {
-          print('Error processing request: $error');
-          request.completer.completeError(error);
+          print('DEBUG: Error in queue processing: $error'); // Debug log
+          if (!request.completer.isCompleted) {
+            request.completer.completeError(error);
+          }
         }
       }
     } finally {
       _isProcessing = false;
+      print('DEBUG: Queue processing finished'); // Debug log
     }
   }
 
@@ -296,8 +292,10 @@ class SDKServiceRequest {
     Map<String, dynamic>? headers,
   }) async {
     try {
+      // Create a completer to handle the response
       final completer = Completer<Response>();
 
+      // Create request options with all necessary parameters
       final options = RequestOptions(
         path: endpoint,
         method: 'POST',
@@ -311,55 +309,80 @@ class SDKServiceRequest {
         },
       );
 
-      print('Queueing POST request to: $endpoint');
+      print('DEBUG: Starting POST request to: $endpoint'); // Debug log
 
-      _requestQueue.add(_QueuedRequest(options, completer));
+      // Make the request directly first
+      try {
+        final response = await dio.fetch(options);
+        print('DEBUG: Initial response received: ${response.statusCode}'); // Debug log
 
-      if (!_isProcessing) {
-        _processQueue();
-      }
+        // Handle redirect responses (status code 302)
+        if (response.statusCode == 302) {
+          final redirectUrl = getRedirectUrl(response);
+          if (redirectUrl != null) {
+            print('DEBUG: Following redirect to: $redirectUrl'); // Debug log
 
-      _timer ??= Timer.periodic(_interval, (timer) {
-        _requestCount = 0;
-        if (_requestQueue.isNotEmpty && !_isProcessing) {
+            // Make a GET request to the redirect URL
+            final redirectResponse = await dio.get(
+              redirectUrl,
+              options: Options(
+                headers: headers,
+                validateStatus: (status) => status != null && status >= 200 && status < 300,
+              ),
+            );
+            return SDKServiceResponse.success(data: redirectResponse.data as T);
+          }
+        }
+
+        // Handle regular success responses
+        if (response.statusCode! >= 200 && response.statusCode! < 300) {
+          return SDKServiceResponse.success(data: response.data as T);
+        }
+
+        // If we get here, something unexpected happened
+        return SDKServiceResponse.error(
+            error: ServiceError(
+                code: '${response.statusCode}',
+                message: 'Unexpected response status code: ${response.statusCode}, '
+                    'uri: ${response.requestOptions.uri}, data:${response.data as T}'
+            )
+        );
+      } catch (error) {
+        print('DEBUG: Error during direct request: $error'); // Debug log
+
+        // If direct request fails, try queue-based rate limiting
+        print('DEBUG: Falling back to rate-limited queue'); // Debug log
+
+        _requestQueue.add(_QueuedRequest(options, completer));
+
+        if (!_isProcessing) {
           _processQueue();
         }
-      });
 
-      final response = await completer.future;
+        _timer ??= Timer.periodic(_interval, (timer) {
+          _requestCount = 0;
+          if (_requestQueue.isNotEmpty && !_isProcessing) {
+            _processQueue();
+          }
+        });
 
-      // Handle redirect responses (status code 302)
-      if (response.statusCode == 302) {
-        final redirectUrl = getRedirectUrl(response);
-        if (redirectUrl != null) {
-          // Queue a new GET request for the redirect
-          final redirectCompleter = Completer<Response>();
-          final redirectOptions = RequestOptions(
-            path: redirectUrl,
-            method: 'GET',
-            headers: headers,
-            baseUrl: '',  // URL is already absolute
-            validateStatus: (status) => status != null && status >= 200 && status < 300,
-          );
+        final queuedResponse = await completer.future;
+        print('DEBUG: Queued response received: ${queuedResponse.statusCode}'); // Debug log
 
-          _requestQueue.add(_QueuedRequest(redirectOptions, redirectCompleter));
-          final redirectResponse = await redirectCompleter.future;
-          return SDKServiceResponse.success(data: redirectResponse.data as T);
+        if (queuedResponse.statusCode! >= 200 && queuedResponse.statusCode! < 300) {
+          return SDKServiceResponse.success(data: queuedResponse.data as T);
         }
-      }
 
-      if (response.statusCode! >= 200 && response.statusCode! < 300) {
-        return SDKServiceResponse.success(data: response.data as T);
+        return SDKServiceResponse.error(
+            error: ServiceError(
+                code: '${queuedResponse.statusCode}',
+                message: 'Unexpected response status code: ${queuedResponse.statusCode}, '
+                    'uri: ${queuedResponse.requestOptions.uri}, data:${queuedResponse.data as T}'
+            )
+        );
       }
-
-      return SDKServiceResponse.error(
-          error: ServiceError(
-              code: '${response.statusCode}',
-              message: 'Unexpected response status code: ${response.statusCode}, '
-                  'uri: ${response.requestOptions.uri}, data:${response.data as T}'
-          )
-      );
     } catch (e) {
+      print('DEBUG: Final error catch: $e'); // Debug log
       return SDKServiceResponse.error(error: _handleError(e));
     }
   }
