@@ -20,7 +20,7 @@ class SDKServiceRequest {
   factory SDKServiceRequest() => _instance;
 
   final _requestQueue = Queue<Function>();
-  late Timer _timer;
+  Timer? _timer;
   int _requestLimit = 3;
   int _requestCount = 0;
   Duration _interval = Duration(seconds: 1);
@@ -64,21 +64,6 @@ class SDKServiceRequest {
       requestBody: true,
     ));
 
-    // dio.interceptors.add(
-    //   InterceptorsWrapper(
-    //     onRequest: (options, handler) {
-    //       _requestQueue.add(() {
-    //         dio.fetch(options).then((response) {
-    //           handler.resolve(response);
-    //         }).catchError((error) {
-    //           handler.reject(error);
-    //         });
-    //       });
-    //       _processQueue();
-    //     },
-    //   ),
-    // );
-
     if (enableCaching) {
       final appDocDir = await getApplicationDocumentsDirectory();
 
@@ -95,9 +80,25 @@ class SDKServiceRequest {
       dio.interceptors.add(DioCacheInterceptor(options: cacheOptions!));
     }
 
+    dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) {
+          _requestQueue.add(() {
+            dio.fetch(options).then((response) {
+              handler.resolve(response);
+            }).catchError((error) {
+              handler.reject(error);
+            });
+          });
+          _processQueue();
+        },
+      ),
+    );
+
     // Initialize the timer to reset the request count
     _timer = Timer.periodic(_interval, (timer) {
       _requestCount = 0;
+      _processQueue();
     });
   }
 
@@ -108,13 +109,9 @@ class SDKServiceRequest {
   }
 
   void _processQueue() {
-    if (_timer == null || !_timer.isActive) {
-      _timer = Timer.periodic(_interval, (timer) {
-        if (_requestQueue.isNotEmpty && _requestCount < _requestLimit) {
-          _requestQueue.removeFirst()();
-          _requestCount++;
-        }
-      });
+    while (_requestQueue.isNotEmpty && _requestCount < _requestLimit) {
+      _requestQueue.removeFirst()();
+      _requestCount++;
     }
   }
 
