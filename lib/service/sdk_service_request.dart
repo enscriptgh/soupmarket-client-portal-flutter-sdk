@@ -15,6 +15,540 @@ class SDKServiceRequest {
   // late final Dio dio;
   late final Dio dio = Dio(); // Ensure dio is initialized
   late final SoupMarketConfig _config;
+
+  // Singleton pattern
+  static final SDKServiceRequest _instance = SDKServiceRequest._internal();
+
+  factory SDKServiceRequest() => _instance;
+
+  final _requestQueue = Queue<_QueuedRequest>();
+
+  // final _requestQueue = Queue<Function>();
+  Timer? _timer;
+  int _requestLimit = 3;
+  int _requestCount = 0;
+  Duration _interval = Duration(seconds: 1);
+  bool _isProcessing = false; // Flag to prevent concurrent queue processing
+
+  bool enableCaching = false;
+  CacheOptions? cacheOptions;
+
+  SDKServiceRequest._internal();
+
+  // Initialize SDK
+  Future<void> initialize({
+    required String baseUrl,
+    required String apiKey,
+    required String apiSecret,
+    Environment environment = Environment.test,
+    Map<String, dynamic>? headers,
+    int timeout = 30000,
+    bool enableCaching = false,
+  }) async {
+    this.enableCaching = enableCaching;
+    String basicAuthCredentials = getBasicAuthToken(apiKey, apiSecret);
+    dio.options = BaseOptions(
+      baseUrl: baseUrl,
+      connectTimeout: Duration(milliseconds: timeout),
+      receiveTimeout: Duration(milliseconds: timeout),
+      headers: {
+        'Authorization': basicAuthCredentials,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        ...?headers,
+      },
+      validateStatus: (status) {
+        return status! >= 100 &&
+            status < 2999; // Accept status codes in the range 100-2999
+      },
+    );
+
+    // Add interceptors
+    dio.interceptors.add(LogInterceptor(
+      request: true,
+      requestHeader: true,
+      requestBody: true,
+      responseHeader: true,
+      responseBody: true,
+      error: true,
+      logPrint: (object) {
+        print('DIO LOG: $object'); // For debugging
+      },
+    ));
+
+    // if (enableCaching) {
+    //   final appDocDir = await getApplicationDocumentsDirectory();
+    //
+    //   cacheOptions = CacheOptions(
+    //     store: BackupCacheStore(
+    //       primary: MemCacheStore(maxSize: 50), // In-memory cache with max 50 items
+    //       secondary: HiveCacheStore(appDocDir.path), // Persistent disk-based cache
+    //     ),
+    //     policy: CachePolicy.request,
+    //     hitCacheOnErrorExcept: [401, 403],
+    //     priority: CachePriority.normal,
+    //     maxStale: const Duration(days: 7),
+    //   );
+    //   dio.interceptors.add(DioCacheInterceptor(options: cacheOptions!));
+    // }
+
+    // rate-limiting interceptor
+    dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) async {
+          final completer = Completer<Response>();
+
+          _requestQueue.add(_QueuedRequest(options, completer));
+
+          // Start processing queue if not already processing
+          if (!_isProcessing) {
+            _processQueue();
+          }
+
+          try {
+            final response = await completer.future;
+            handler.resolve(response);
+          } catch (error) {
+            handler.reject(error as DioException);
+          }
+        },
+      ),
+    );
+
+    // Initialize the timer to reset the request count
+    // Reset request count periodically
+    _timer?.cancel();
+    _timer = Timer.periodic(_interval, (timer) {
+      _requestCount = 0;
+      if (_requestQueue.isNotEmpty && !_isProcessing) {
+        _processQueue();
+      }
+    });
+  }
+
+  String getBasicAuthToken(String apiKey, String apiSecret) {
+    final credentials = '$apiKey:$apiSecret';
+    final encodedCredentials = base64.encode(utf8.encode(credentials));
+    return 'Basic $encodedCredentials';
+  }
+
+  Future<void> _processQueue() async {
+    if (_isProcessing) return;
+    _isProcessing = true;
+
+    try {
+      while (_requestQueue.isNotEmpty && _requestCount < _requestLimit) {
+        final request = _requestQueue.removeFirst();
+        _requestCount++;
+
+        try {
+          print('Processing request: ${request.options.path}');
+
+          Response response;
+          if (request.options.extra.containsKey('savePath')) {
+            // Handle download request
+            response = await dio.download(
+              request.options.path,
+              request.options.extra['savePath'],
+              options: Options(
+                headers: request.options.headers,
+                method: request.options.method,
+              ),
+              queryParameters: request.options.queryParameters,
+            );
+          } else {
+            // Handle regular request
+            response = await dio.fetch(request.options);
+          }
+
+          print('Got response: ${response.statusCode}');
+          request.completer.complete(response);
+        } catch (error) {
+          print('Error processing request: $error');
+          request.completer.completeError(error);
+        }
+      }
+    } finally {
+      _isProcessing = false;
+    }
+  }
+
+  // Cleanup method
+  void dispose() {
+    _timer?.cancel();
+    _timer = null;
+    _requestQueue.clear();
+    _requestCount = 0;
+    _isProcessing = false;
+  }
+
+  Future<SDKServiceResponse<T>> get<T>({
+    required String endpoint,
+    Map<String, dynamic>? queryParameters,
+    Map<String, dynamic>? headers,
+  }) async {
+    try {
+      final completer = Completer<Response>();
+
+      // Merge default headers with custom headers
+      final mergedHeaders = {
+        ...dio.options.headers,
+        ...?headers,
+      };
+
+      final options = RequestOptions(
+        path: endpoint,
+        method: 'GET',
+        queryParameters: queryParameters,
+        baseUrl: dio.options.baseUrl,
+        headers: mergedHeaders,
+      );
+
+      print('Queueing GET request to: $endpoint'); // Debug log
+
+      _requestQueue.add(_QueuedRequest(options, completer));
+
+      if (!_isProcessing) {
+        _processQueue();
+      }
+
+      // Start the rate limit reset timer if not already started
+      _timer ??= Timer.periodic(_interval, (timer) {
+        _requestCount = 0;
+        if (_requestQueue.isNotEmpty && !_isProcessing) {
+          _processQueue();
+        }
+      });
+
+      // Set up caching if enabled
+      if (enableCaching) {
+        final appDocDir = await getApplicationDocumentsDirectory();
+        cacheOptions = CacheOptions(
+          store: BackupCacheStore(
+            primary: MemCacheStore(maxSize: 50),
+            secondary: HiveCacheStore(appDocDir.path),
+          ),
+          policy: CachePolicy.request,
+          hitCacheOnErrorExcept: [401, 403],
+          priority: CachePriority.normal,
+          maxStale: const Duration(days: 7),
+        );
+
+        // Add cache interceptor if not already added
+        if (!dio.interceptors.any((i) => i is DioCacheInterceptor)) {
+          dio.interceptors.add(DioCacheInterceptor(options: cacheOptions!));
+        }
+      }
+
+      // Wait for the rate-limited request to complete
+      final response = await completer.future;
+
+      return SDKServiceResponse.success(data: response.data as T);
+    } catch (e) {
+      return SDKServiceResponse.error(error: _handleError(e));
+    }
+  }
+
+  Future<SDKServiceResponse<T>> download<T>({
+    required String endpoint,
+    required String savePath,
+    Map<String, dynamic>? params,
+    Map<String, dynamic>? headers,
+  }) async {
+    try {
+      final completer = Completer<Response>();
+
+      final options = RequestOptions(
+        path: endpoint,
+        method: 'GET', // Download uses GET
+        queryParameters: params,
+        baseUrl: dio.options.baseUrl,
+        headers: {...dio.options.headers, ...?headers},
+        extra: {'savePath': savePath}, // Pass savePath in extra
+      );
+
+      print('Queueing DOWNLOAD request to: $endpoint');
+
+      _requestQueue.add(_QueuedRequest(options, completer));
+
+      if (!_isProcessing) {
+        _processQueue();
+      }
+
+      _timer ??= Timer.periodic(_interval, (timer) {
+        _requestCount = 0;
+        if (_requestQueue.isNotEmpty && !_isProcessing) {
+          _processQueue();
+        }
+      });
+
+      final response = await completer.future;
+      return SDKServiceResponse.success(data: response.data as T);
+    } catch (e) {
+      return SDKServiceResponse.error(error: _handleError(e));
+    }
+  }
+
+  Future<SDKServiceResponse<T>> post<T>({
+    required String endpoint,
+    FormData? data,
+    Map<String, dynamic>? queryParameters,
+    Map<String, dynamic>? headers,
+  }) async {
+    try {
+      final completer = Completer<Response>();
+
+      final options = RequestOptions(
+        path: endpoint,
+        method: 'POST',
+        data: data,
+        queryParameters: queryParameters,
+        baseUrl: dio.options.baseUrl,
+        headers: {...dio.options.headers, ...?headers},
+        followRedirects: true,
+        validateStatus: (status) {
+          return status != null && (status >= 200 && status < 400 || status == 302);
+        },
+      );
+
+      print('Queueing POST request to: $endpoint');
+
+      _requestQueue.add(_QueuedRequest(options, completer));
+
+      if (!_isProcessing) {
+        _processQueue();
+      }
+
+      _timer ??= Timer.periodic(_interval, (timer) {
+        _requestCount = 0;
+        if (_requestQueue.isNotEmpty && !_isProcessing) {
+          _processQueue();
+        }
+      });
+
+      final response = await completer.future;
+
+      // Handle redirect responses (status code 302)
+      if (response.statusCode == 302) {
+        final redirectUrl = getRedirectUrl(response);
+        if (redirectUrl != null) {
+          // Queue a new GET request for the redirect
+          final redirectCompleter = Completer<Response>();
+          final redirectOptions = RequestOptions(
+            path: redirectUrl,
+            method: 'GET',
+            headers: headers,
+            baseUrl: '',  // URL is already absolute
+            validateStatus: (status) => status != null && status >= 200 && status < 300,
+          );
+
+          _requestQueue.add(_QueuedRequest(redirectOptions, redirectCompleter));
+          final redirectResponse = await redirectCompleter.future;
+          return SDKServiceResponse.success(data: redirectResponse.data as T);
+        }
+      }
+
+      if (response.statusCode! >= 200 && response.statusCode! < 300) {
+        return SDKServiceResponse.success(data: response.data as T);
+      }
+
+      return SDKServiceResponse.error(
+          error: ServiceError(
+              code: '${response.statusCode}',
+              message: 'Unexpected response status code: ${response.statusCode}, '
+                  'uri: ${response.requestOptions.uri}, data:${response.data as T}'
+          )
+      );
+    } catch (e) {
+      return SDKServiceResponse.error(error: _handleError(e));
+    }
+  }
+
+  Future<SDKServiceResponse<T>> put<T>({
+    required String endpoint,
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+    Map<String, dynamic>? headers,
+  }) async {
+    try {
+      final completer = Completer<Response>();
+
+      final options = RequestOptions(
+        path: endpoint,
+        method: 'PUT',
+        data: data,
+        queryParameters: queryParameters,
+        baseUrl: dio.options.baseUrl,
+        headers: {...dio.options.headers, ...?headers},
+        followRedirects: true,
+        validateStatus: (status) {
+          return status != null && (status >= 200 && status < 400 || status == 302);
+        },
+      );
+
+      print('Queueing PUT request to: $endpoint');
+
+      _requestQueue.add(_QueuedRequest(options, completer));
+
+      if (!_isProcessing) {
+        _processQueue();
+      }
+
+      _timer ??= Timer.periodic(_interval, (timer) {
+        _requestCount = 0;
+        if (_requestQueue.isNotEmpty && !_isProcessing) {
+          _processQueue();
+        }
+      });
+
+      final response = await completer.future;
+
+      // Handle redirect responses (status code 302)
+      if (response.statusCode == 302) {
+        final redirectUrl = getRedirectUrl(response);
+        if (redirectUrl != null) {
+          final redirectCompleter = Completer<Response>();
+          final redirectOptions = RequestOptions(
+            path: redirectUrl,
+            method: 'GET',
+            headers: headers,
+            baseUrl: '',
+            validateStatus: (status) => status != null && status >= 200 && status < 300,
+          );
+
+          _requestQueue.add(_QueuedRequest(redirectOptions, redirectCompleter));
+          final redirectResponse = await redirectCompleter.future;
+          return SDKServiceResponse.success(data: redirectResponse.data as T);
+        }
+      }
+
+      if (response.statusCode! >= 200 && response.statusCode! < 300) {
+        return SDKServiceResponse.success(data: response.data as T);
+      }
+
+      return SDKServiceResponse.error(
+          error: ServiceError(
+              code: '${response.statusCode}',
+              message: 'Unexpected response status code: ${response.statusCode}, '
+                  'uri: ${response.requestOptions.uri}, data:${response.data as T}'
+          )
+      );
+    } catch (e) {
+      return SDKServiceResponse.error(error: _handleError(e));
+    }
+  }
+
+  Future<SDKServiceResponse<T>> delete<T>({
+    required String endpoint,
+    Map<String, dynamic>? queryParameters,
+    Map<String, dynamic>? headers,
+  }) async {
+    try {
+      final completer = Completer<Response>();
+
+      final options = RequestOptions(
+        path: endpoint,
+        method: 'DELETE',
+        queryParameters: queryParameters,
+        baseUrl: dio.options.baseUrl,
+        headers: {...dio.options.headers, ...?headers},
+      );
+
+      print('Queueing DELETE request to: $endpoint');
+
+      _requestQueue.add(_QueuedRequest(options, completer));
+
+      if (!_isProcessing) {
+        _processQueue();
+      }
+
+      _timer ??= Timer.periodic(_interval, (timer) {
+        _requestCount = 0;
+        if (_requestQueue.isNotEmpty && !_isProcessing) {
+          _processQueue();
+        }
+      });
+
+      final response = await completer.future;
+      return SDKServiceResponse.success(data: response.data as T);
+    } catch (e) {
+      return SDKServiceResponse.error(error: _handleError(e));
+    }
+  }
+
+// Keep your existing helper methods
+  String? getRedirectUrl(Response response) {
+    String? location = response.headers.value('location') ??
+        response.headers.value('Location');
+
+    if (location != null && !location.startsWith('http')) {
+      final baseUrl = response.requestOptions.baseUrl;
+      location = Uri.parse(baseUrl).resolve(location).toString();
+    }
+
+    return location;
+  }
+
+  ServiceError _handleError(dynamic error) {
+    if (error is DioError) {
+      switch (error.type) {
+        case DioErrorType.connectionTimeout:
+        case DioErrorType.sendTimeout:
+        case DioErrorType.receiveTimeout:
+          return ServiceError(
+            code: 'TIMEOUT',
+            message: 'Connection timeout',
+            originalError: error,
+          );
+        case DioErrorType.badResponse:
+          return ServiceError(
+            code: '${error.response?.statusCode}',
+            message: error.response?.data?['message'] ??
+                'Unknown error occurred',
+            originalError: error,
+          );
+        default:
+          return ServiceError(
+            code: 'NETWORK_ERROR',
+            message: 'Network error occurred',
+            originalError: error,
+          );
+      }
+    }
+    return ServiceError(
+      code: 'UNKNOWN',
+      message: 'Unknown error occurred',
+      originalError: error,
+    );
+  }
+}
+
+class _QueuedRequest {
+  final RequestOptions options;
+  final Completer<Response> completer;
+
+  _QueuedRequest(this.options, this.completer);
+}
+
+
+/*
+import 'dart:async';
+import 'dart:collection';
+import 'dart:convert';
+
+// import 'package:dio/dio.dart' as dio;
+import 'package:dio/dio.dart';
+import 'package:soupmarket_sdk/config/soup_market_config.dart';
+import 'package:soupmarket_sdk/service/sdk_service_response.dart';
+
+import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
+import 'package:dio_cache_interceptor_hive_store/dio_cache_interceptor_hive_store.dart';
+import 'package:path_provider/path_provider.dart';
+
+class SDKServiceRequest {
+  // late final Dio dio;
+  late final Dio dio = Dio(); // Ensure dio is initialized
+  late final SoupMarketConfig _config;
   // Singleton pattern
   static final SDKServiceRequest _instance = SDKServiceRequest._internal();
   factory SDKServiceRequest() => _instance;
@@ -376,4 +910,4 @@ class _QueuedRequest {
   final Completer<Response> completer;
 
   _QueuedRequest(this.options, this.completer);
-}
+}*/
