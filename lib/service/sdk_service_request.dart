@@ -64,36 +64,36 @@ class SDKServiceRequest {
       requestBody: true,
     ));
 
-    // dio.interceptors.add(
-    //   InterceptorsWrapper(
-    //     onRequest: (options, handler) {
-    //       _requestQueue.add(() {
-    //         dio.fetch(options).then((response) {
-    //           handler.resolve(response);
-    //         }).catchError((error) {
-    //           handler.reject(error);
-    //         });
-    //       });
-    //       _processQueue();
-    //     },
-    //   ),
-    // );
+    dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) {
+          _requestQueue.add(() {
+            dio.fetch(options).then((response) {
+              handler.resolve(response);
+            }).catchError((error) {
+              handler.reject(error);
+            });
+          });
+          _processQueue();
+        },
+      ),
+    );
 
-    // if (enableCaching) {
-    //   final appDocDir = await getApplicationDocumentsDirectory();
-    //
-    //   cacheOptions = CacheOptions(
-    //     store: BackupCacheStore(
-    //       primary: MemCacheStore(maxSize: 50), // In-memory cache with max 50 items
-    //       secondary: HiveCacheStore(appDocDir.path), // Persistent disk-based cache
-    //     ),
-    //     policy: CachePolicy.request,
-    //     hitCacheOnErrorExcept: [401, 403],
-    //     priority: CachePriority.normal,
-    //     maxStale: const Duration(days: 7),
-    //   );
-    //   dio.interceptors.add(DioCacheInterceptor(options: cacheOptions!));
-    // }
+    if (enableCaching) {
+      final appDocDir = await getApplicationDocumentsDirectory();
+
+      cacheOptions = CacheOptions(
+        store: BackupCacheStore(
+          primary: MemCacheStore(maxSize: 50), // In-memory cache with max 50 items
+          secondary: HiveCacheStore(appDocDir.path), // Persistent disk-based cache
+        ),
+        policy: CachePolicy.request,
+        hitCacheOnErrorExcept: [401, 403],
+        priority: CachePriority.normal,
+        maxStale: const Duration(days: 7),
+      );
+      dio.interceptors.add(DioCacheInterceptor(options: cacheOptions!));
+    }
 
     // Initialize the timer to reset the request count
     _timer = Timer.periodic(_interval, (timer) {
@@ -124,21 +124,6 @@ class SDKServiceRequest {
     Map<String, dynamic>? headers,
   }) async {
     try {
-      if (enableCaching) {
-        final appDocDir = await getApplicationDocumentsDirectory();
-
-        cacheOptions = CacheOptions(
-          store: BackupCacheStore(
-            primary: MemCacheStore(maxSize: 50), // In-memory cache with max 50 items
-            secondary: HiveCacheStore(appDocDir.path), // Persistent disk-based cache
-          ),
-          policy: CachePolicy.request,
-          hitCacheOnErrorExcept: [401, 403],
-          priority: CachePriority.normal,
-          maxStale: const Duration(days: 7),
-        );
-        dio.interceptors.add(DioCacheInterceptor(options: cacheOptions!));
-      }
       final response = await dio.get(
         endpoint,
         queryParameters: queryParameters,
