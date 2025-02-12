@@ -19,11 +19,14 @@ class SDKServiceRequest {
   static final SDKServiceRequest _instance = SDKServiceRequest._internal();
   factory SDKServiceRequest() => _instance;
 
-  final _requestQueue = Queue<Function>();
+  final _requestQueue = Queue<_QueuedRequest>();
+  // final _requestQueue = Queue<Function>();
   Timer? _timer;
   int _requestLimit = 3;
   int _requestCount = 0;
   Duration _interval = Duration(seconds: 1);
+  bool _isProcessing = false; // Flag to prevent concurrent queue processing
+
   bool enableCaching = false;
   CacheOptions? cacheOptions;
 
@@ -80,25 +83,37 @@ class SDKServiceRequest {
       dio.interceptors.add(DioCacheInterceptor(options: cacheOptions!));
     }
 
+    // rate-limiting interceptor
     dio.interceptors.add(
       InterceptorsWrapper(
-        onRequest: (options, handler) {
-          _requestQueue.add(() {
-            dio.fetch(options).then((response) {
-              handler.resolve(response);
-            }).catchError((error) {
-              handler.reject(error);
-            });
-          });
-          _processQueue();
+        onRequest: (options, handler) async {
+          final completer = Completer<Response>();
+
+          _requestQueue.add(_QueuedRequest(options, completer));
+
+          // Start processing queue if not already processing
+          if (!_isProcessing) {
+            _processQueue();
+          }
+
+          try {
+            final response = await completer.future;
+            handler.resolve(response);
+          } catch (error) {
+            handler.reject(error as DioException);
+          }
         },
       ),
     );
 
     // Initialize the timer to reset the request count
+    // Reset request count periodically
+    _timer?.cancel();
     _timer = Timer.periodic(_interval, (timer) {
       _requestCount = 0;
-      _processQueue();
+      if (_requestQueue.isNotEmpty && !_isProcessing) {
+        _processQueue();
+      }
     });
   }
 
@@ -108,11 +123,32 @@ class SDKServiceRequest {
     return 'Basic $encodedCredentials';
   }
 
-  void _processQueue() {
+  Future<void> _processQueue() async {
+    if (_isProcessing) return;
+    _isProcessing = true;
+
     while (_requestQueue.isNotEmpty && _requestCount < _requestLimit) {
-      _requestQueue.removeFirst()();
+      final request = _requestQueue.removeFirst();
       _requestCount++;
+
+      try {
+        final response = await dio.fetch(request.options);
+        request.completer.complete(response);
+      } catch (error) {
+        request.completer.completeError(error);
+      }
     }
+
+    _isProcessing = false;
+  }
+
+  // Cleanup method
+  void dispose() {
+    _timer?.cancel();
+    _timer = null;
+    _requestQueue.clear();
+    _requestCount = 0;
+    _isProcessing = false;
   }
 
   Future<SDKServiceResponse<T>> get<T>({
@@ -318,5 +354,11 @@ class SDKServiceRequest {
       originalError: error,
     );
   }
+}
 
+class _QueuedRequest {
+  final RequestOptions options;
+  final Completer<Response> completer;
+
+  _QueuedRequest(this.options, this.completer);
 }
