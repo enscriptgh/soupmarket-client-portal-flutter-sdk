@@ -64,20 +64,20 @@ class SDKServiceRequest {
       requestBody: true,
     ));
 
-    dio.interceptors.add(
-      InterceptorsWrapper(
-        onRequest: (options, handler) {
-          _requestQueue.add(() {
-            dio.fetch(options).then((response) {
-              handler.resolve(response);
-            }).catchError((error) {
-              handler.reject(error);
-            });
-          });
-          _processQueue();
-        },
-      ),
-    );
+    // dio.interceptors.add(
+    //   InterceptorsWrapper(
+    //     onRequest: (options, handler) {
+    //       _requestQueue.add(() {
+    //         dio.fetch(options).then((response) {
+    //           handler.resolve(response);
+    //         }).catchError((error) {
+    //           handler.reject(error);
+    //         });
+    //       });
+    //       _processQueue();
+    //     },
+    //   ),
+    // );
 
     // if (enableCaching) {
     //   final appDocDir = await getApplicationDocumentsDirectory();
