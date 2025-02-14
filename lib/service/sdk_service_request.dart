@@ -4,13 +4,13 @@ import 'dart:convert';
 
 // import 'package:dio/dio.dart' as dio;
 import 'package:dio/dio.dart';
-import 'package:mutex/mutex.dart';
 import 'package:soupmarket_sdk/config/soup_market_config.dart';
 import 'package:soupmarket_sdk/service/sdk_service_response.dart';
 
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:dio_cache_interceptor_hive_store/dio_cache_interceptor_hive_store.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:synchronized/synchronized.dart';
 
 /*class SDKServiceRequest {
   // late final Dio dio;
@@ -572,6 +572,21 @@ class SDKServiceRequest {
   CacheOptions? cacheOptions;
 
   SDKServiceRequest._internal();
+  // {
+  //   //Initialize with throttler
+    // dio.interceptors.add(
+    //   SDKDioThrottler(
+    //     interval: const Duration(milliseconds: 500),  // Customize interval
+    //     onThrottled: (request, time) {
+    //       print('Request throttled until: $time');  // Optional logging
+    //     },
+    //     shouldThrottle: (request) {
+    //       //Optional: customize which requests to throttle
+          // return true;  // Throttle all requests by default
+        // },
+      // ),
+    // );
+  // }
 
   // Initialize SDK
   Future<void> initialize({
@@ -608,6 +623,15 @@ class SDKServiceRequest {
       requestBody: true,
     ));
 
+    dio.interceptors.add(
+      SDKDioThrottler(
+        interval: const Duration(milliseconds: 500),
+        onThrottled: (request, time) {
+          print('Request throttled until: $time');
+        },
+      ),
+    );
+
     if (enableCaching) {
       final appDocDir = await getApplicationDocumentsDirectory();
 
@@ -623,15 +647,6 @@ class SDKServiceRequest {
       );
       dio.interceptors.add(DioCacheInterceptor(options: cacheOptions!));
     }
-
-    dio.interceptors.add(
-      SoupMarketDioThrottler(
-        const Duration(seconds: 3),
-        onThrottled: (req, until) {
-          print('${req.uri.toString()} has been delayed until ${until.toString()}');
-        },
-      ),
-    );
 
     /*// rate-limiting interceptor
     dio.interceptors.add(
@@ -920,59 +935,74 @@ class SDKServiceRequest {
   }
 }
 
-
-
-
-class SoupMarketDioThrottler extends Interceptor {
-  /// The interval between which requests are fired.
+class SDKDioThrottler extends Interceptor {
+  /// The interval between which requests are fired
   final Duration interval;
 
-  /// A predicate to check whether a certain request should be throttled.
-  ///
-  /// If null, every request is throttled by default.
-  bool Function(RequestOptions req)? shouldThrottle;
+  /// Optional predicate to determine if a request should be throttled
+  final bool Function(RequestOptions req)? shouldThrottle;
 
-  /// Called when a request has been delayed execution. Useful for debugging.
-  ///
-  /// The second argument represents the time that the request is scheduled
-  /// to be fired.
-  void Function(RequestOptions req, DateTime until)? onThrottled;
+  /// Callback for when a request is throttled
+  final void Function(RequestOptions req, DateTime until)? onThrottled;
 
+  /// Next available time slot for a request
   DateTime _nextAvailable = DateTime.now();
-  final Mutex _mutex = Mutex();
 
-  SoupMarketDioThrottler(this.interval, {this.shouldThrottle, this.onThrottled});
+  /// Lock for thread-safe operations
+  final _lock = Lock();
+
+  SDKDioThrottler({
+    this.interval = const Duration(milliseconds: 500),  // Default to 500ms
+    this.shouldThrottle,
+    this.onThrottled,
+  });
 
   @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+  void onRequest(
+      RequestOptions options,
+      RequestInterceptorHandler handler,
+      ) async {
+    // Skip throttling if the predicate returns false
     if (shouldThrottle?.call(options) == false) {
       handler.next(options);
       return;
     }
 
-    var now = DateTime.now();
-    _mutex.protect(() async {
-      if (now.isBefore(_nextAvailable)) {
-        // Throttle this request
-        var scheduledTime = _nextAvailable;
-        // Compute the next time a request is able to be fired
-        _nextAvailable = _nextAvailable.add(interval);
-        return scheduledTime;
-      } else {
-        // Not throttled, fire the request immediately
-        _nextAvailable = now.add(interval);
-        return null;
-      }
-    }).then((scheduledTime) {
+    final now = DateTime.now();
+
+    try {
+      final DateTime? scheduledTime = await _lock.synchronized(() {
+        if (now.isBefore(_nextAvailable)) {
+          // Need to throttle this request
+          final scheduledTime = _nextAvailable;
+          // Update next available slot
+          _nextAvailable = _nextAvailable.add(interval);
+          return scheduledTime;
+        } else {
+          // Can execute immediately
+          _nextAvailable = now.add(interval);
+          return null;
+        }
+      });
+
       if (scheduledTime != null) {
+        // Notify if request is throttled
         onThrottled?.call(options, scheduledTime);
-        Future.delayed(
-          scheduledTime.difference(now),
-              () => handler.next(options),
-        );
-      } else {
-        handler.next(options);
+
+        // Delay the request
+        await Future.delayed(scheduledTime.difference(now));
       }
-    });
+
+      // Process the request
+      handler.next(options);
+    } catch (error) {
+      handler.reject(
+        DioException(
+          requestOptions: options,
+          error: error,
+          message: 'Error in throttler: $error',
+        ),
+      );
+    }
   }
 }
