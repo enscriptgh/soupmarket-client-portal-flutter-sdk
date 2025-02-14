@@ -4,6 +4,7 @@ import 'dart:convert';
 
 // import 'package:dio/dio.dart' as dio;
 import 'package:dio/dio.dart';
+import 'package:mutex/mutex.dart';
 import 'package:soupmarket_sdk/config/soup_market_config.dart';
 import 'package:soupmarket_sdk/service/sdk_service_response.dart';
 
@@ -11,7 +12,7 @@ import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:dio_cache_interceptor_hive_store/dio_cache_interceptor_hive_store.dart';
 import 'package:path_provider/path_provider.dart';
 
-class SDKServiceRequest {
+/*class SDKServiceRequest {
   // late final Dio dio;
   late final Dio dio = Dio(); // Ensure dio is initialized
   late final SoupMarketConfig _config;
@@ -551,22 +552,7 @@ class _QueuedRequest {
   final Completer<Response> completer;
 
   _QueuedRequest(this.options, this.completer);
-}
-
-
-/*
-import 'dart:async';
-import 'dart:collection';
-import 'dart:convert';
-
-// import 'package:dio/dio.dart' as dio;
-import 'package:dio/dio.dart';
-import 'package:soupmarket_sdk/config/soup_market_config.dart';
-import 'package:soupmarket_sdk/service/sdk_service_response.dart';
-
-import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
-import 'package:dio_cache_interceptor_hive_store/dio_cache_interceptor_hive_store.dart';
-import 'package:path_provider/path_provider.dart';
+}*/
 
 class SDKServiceRequest {
   // late final Dio dio;
@@ -576,8 +562,6 @@ class SDKServiceRequest {
   static final SDKServiceRequest _instance = SDKServiceRequest._internal();
   factory SDKServiceRequest() => _instance;
 
-  final _requestQueue = Queue<_QueuedRequest>();
-  // final _requestQueue = Queue<Function>();
   Timer? _timer;
   int _requestLimit = 3;
   int _requestCount = 0;
@@ -624,23 +608,32 @@ class SDKServiceRequest {
       requestBody: true,
     ));
 
-    // if (enableCaching) {
-    //   final appDocDir = await getApplicationDocumentsDirectory();
-    //
-    //   cacheOptions = CacheOptions(
-    //     store: BackupCacheStore(
-    //       primary: MemCacheStore(maxSize: 50), // In-memory cache with max 50 items
-    //       secondary: HiveCacheStore(appDocDir.path), // Persistent disk-based cache
-    //     ),
-    //     policy: CachePolicy.request,
-    //     hitCacheOnErrorExcept: [401, 403],
-    //     priority: CachePriority.normal,
-    //     maxStale: const Duration(days: 7),
-    //   );
-    //   dio.interceptors.add(DioCacheInterceptor(options: cacheOptions!));
-    // }
+    if (enableCaching) {
+      final appDocDir = await getApplicationDocumentsDirectory();
 
-    // rate-limiting interceptor
+      cacheOptions = CacheOptions(
+        store: BackupCacheStore(
+          primary: MemCacheStore(maxSize: 50), // In-memory cache with max 50 items
+          secondary: HiveCacheStore(appDocDir.path), // Persistent disk-based cache
+        ),
+        policy: CachePolicy.request,
+        hitCacheOnErrorExcept: [401, 403],
+        priority: CachePriority.normal,
+        maxStale: const Duration(days: 7),
+      );
+      dio.interceptors.add(DioCacheInterceptor(options: cacheOptions!));
+    }
+
+    dio.interceptors.add(
+      SoupMarketDioThrottler(
+        const Duration(seconds: 3),
+        onThrottled: (req, until) {
+          print('${req.uri.toString()} has been delayed until ${until.toString()}');
+        },
+      ),
+    );
+
+    /*// rate-limiting interceptor
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
@@ -671,7 +664,7 @@ class SDKServiceRequest {
       if (_requestQueue.isNotEmpty && !_isProcessing) {
         _processQueue();
       }
-    });
+    });*/
   }
 
   String getBasicAuthToken(String apiKey, String apiSecret) {
@@ -680,7 +673,7 @@ class SDKServiceRequest {
     return 'Basic $encodedCredentials';
   }
 
-  Future<void> _processQueue() async {
+  /*Future<void> _processQueue() async {
     if (_isProcessing) return;
     _isProcessing = true;
 
@@ -697,16 +690,15 @@ class SDKServiceRequest {
     }
 
     _isProcessing = false;
-  }
+  }*/
 
   // Cleanup method
-  void dispose() {
-    _timer?.cancel();
-    _timer = null;
-    _requestQueue.clear();
-    _requestCount = 0;
-    _isProcessing = false;
-  }
+  // void dispose() {
+  //   _timer?.cancel();
+  //   _timer = null;
+  //   _requestCount = 0;
+  //   _isProcessing = false;
+  // }
 
   Future<SDKServiceResponse<T>> get<T>({
     required String endpoint,
@@ -714,21 +706,21 @@ class SDKServiceRequest {
     Map<String, dynamic>? headers,
   }) async {
     try {
-      if (enableCaching) {
-        final appDocDir = await getApplicationDocumentsDirectory();
-
-        cacheOptions = CacheOptions(
-          store: BackupCacheStore(
-            primary: MemCacheStore(maxSize: 50), // In-memory cache with max 50 items
-            secondary: HiveCacheStore(appDocDir.path), // Persistent disk-based cache
-          ),
-          policy: CachePolicy.request,
-          hitCacheOnErrorExcept: [401, 403],
-          priority: CachePriority.normal,
-          maxStale: const Duration(days: 7),
-        );
-        dio.interceptors.add(DioCacheInterceptor(options: cacheOptions!));
-      }
+      // if (enableCaching) {
+      //   final appDocDir = await getApplicationDocumentsDirectory();
+      //
+      //   cacheOptions = CacheOptions(
+      //     store: BackupCacheStore(
+      //       primary: MemCacheStore(maxSize: 50), // In-memory cache with max 50 items
+      //       secondary: HiveCacheStore(appDocDir.path), // Persistent disk-based cache
+      //     ),
+      //     policy: CachePolicy.request,
+      //     hitCacheOnErrorExcept: [401, 403],
+      //     priority: CachePriority.normal,
+      //     maxStale: const Duration(days: 7),
+      //   );
+      //   dio.interceptors.add(DioCacheInterceptor(options: cacheOptions!));
+      // }
       final response = await dio.get(
         endpoint,
         queryParameters: queryParameters,
@@ -928,9 +920,59 @@ class SDKServiceRequest {
   }
 }
 
-class _QueuedRequest {
-  final RequestOptions options;
-  final Completer<Response> completer;
 
-  _QueuedRequest(this.options, this.completer);
-}*/
+
+
+class SoupMarketDioThrottler extends Interceptor {
+  /// The interval between which requests are fired.
+  final Duration interval;
+
+  /// A predicate to check whether a certain request should be throttled.
+  ///
+  /// If null, every request is throttled by default.
+  bool Function(RequestOptions req)? shouldThrottle;
+
+  /// Called when a request has been delayed execution. Useful for debugging.
+  ///
+  /// The second argument represents the time that the request is scheduled
+  /// to be fired.
+  void Function(RequestOptions req, DateTime until)? onThrottled;
+
+  DateTime _nextAvailable = DateTime.now();
+  final Mutex _mutex = Mutex();
+
+  SoupMarketDioThrottler(this.interval, {this.shouldThrottle, this.onThrottled});
+
+  @override
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+    if (shouldThrottle?.call(options) == false) {
+      handler.next(options);
+      return;
+    }
+
+    var now = DateTime.now();
+    _mutex.protect(() async {
+      if (now.isBefore(_nextAvailable)) {
+        // Throttle this request
+        var scheduledTime = _nextAvailable;
+        // Compute the next time a request is able to be fired
+        _nextAvailable = _nextAvailable.add(interval);
+        return scheduledTime;
+      } else {
+        // Not throttled, fire the request immediately
+        _nextAvailable = now.add(interval);
+        return null;
+      }
+    }).then((scheduledTime) {
+      if (scheduledTime != null) {
+        onThrottled?.call(options, scheduledTime);
+        Future.delayed(
+          scheduledTime.difference(now),
+              () => handler.next(options),
+        );
+      } else {
+        handler.next(options);
+      }
+    });
+  }
+}
