@@ -623,11 +623,19 @@ class SDKServiceRequest {
       requestBody: true,
     ));
 
+    // dio.interceptors.add(
+    //   SDKDioThrottler(
+    //     interval: const Duration(milliseconds: 500),
+    //     onThrottled: (request, time) {
+    //       print('Request throttled until: $time');
+    //     },
+    //   ),
+    // );
     dio.interceptors.add(
-      SDKDioThrottler(
-        interval: const Duration(milliseconds: 500),
-        onThrottled: (request, time) {
-          print('Request throttled until: $time');
+      SDKRateLimiter(
+        consumerId: apiKey,
+        onRateLimited: (request, time) {
+          print('Request rate limited until: $time for endpoint: ${request.path}');
         },
       ),
     );
@@ -870,6 +878,7 @@ class SDKServiceRequest {
       return SDKServiceResponse.error(error: _handleError(e));
     }
   }
+
   String? getRedirectUrl(Response response) {
     // Check 'location' header (standard)
     String? location = response.headers.value('location') ??
@@ -935,64 +944,68 @@ class SDKServiceRequest {
   }
 }
 
-class SDKDioThrottler extends Interceptor {
-  /// The interval between which requests are fired
-  final Duration interval;
-
-  /// Optional predicate to determine if a request should be throttled
-  final bool Function(RequestOptions req)? shouldThrottle;
-
-  /// Callback for when a request is throttled
-  final void Function(RequestOptions req, DateTime until)? onThrottled;
-
-  /// Next available time slot for a request
-  DateTime _nextAvailable = DateTime.now();
+class SDKRateLimiter extends Interceptor {
+  /// Maps endpoint to the time when next request is allowed
+  final Map<String, DateTime> _nextAvailableByEndpoint = {};
 
   /// Lock for thread-safe operations
   final _lock = Lock();
 
-  SDKDioThrottler({
-    this.interval = const Duration(milliseconds: 500),  // Default to 500ms
-    this.shouldThrottle,
-    this.onThrottled,
+  /// Time window size matching server (3 seconds)
+  final Duration _windowSize = const Duration(seconds: 3);
+
+  /// Optional consumer ID (if your app has multiple users)
+  final String? consumerId;
+
+  /// Callback for when a request is rate-limited
+  final void Function(RequestOptions req, DateTime until)? onRateLimited;
+
+  SDKRateLimiter({
+    this.consumerId,
+    this.onRateLimited,
   });
+
+  /// Extract endpoint from request path
+  String _getEndpointKey(RequestOptions options) {
+    // Extract the base endpoint path from the full URL
+    // You may need to customize this based on your API structure
+    final uri = Uri.parse(options.path);
+    final segments = uri.pathSegments;
+    return segments.isNotEmpty ? segments.first : options.path;
+  }
 
   @override
   void onRequest(
       RequestOptions options,
       RequestInterceptorHandler handler,
       ) async {
-    // Skip throttling if the predicate returns false
-    if (shouldThrottle?.call(options) == false) {
-      handler.next(options);
-      return;
-    }
-
+    final endpoint = _getEndpointKey(options);
     final now = DateTime.now();
 
     try {
       final DateTime? scheduledTime = await _lock.synchronized(() {
-        if (now.isBefore(_nextAvailable)) {
-          // Need to throttle this request
-          final scheduledTime = _nextAvailable;
+        final nextAvailable = _nextAvailableByEndpoint[endpoint] ?? now;
+
+        if (now.isBefore(nextAvailable)) {
+          // Need to rate limit this request
+          final scheduledTime = nextAvailable;
           // Update next available slot
-          _nextAvailable = _nextAvailable.add(interval);
+          _nextAvailableByEndpoint[endpoint] = nextAvailable.add(_windowSize);
           return scheduledTime;
         } else {
           // Can execute immediately
-          _nextAvailable = now.add(interval);
+          _nextAvailableByEndpoint[endpoint] = now.add(_windowSize);
           return null;
         }
       });
 
       if (scheduledTime != null) {
-        // Notify if request is throttled
-        onThrottled?.call(options, scheduledTime);
+        // Notify if request is rate limited
+        onRateLimited?.call(options, scheduledTime);
 
         // Delay the request
         await Future.delayed(scheduledTime.difference(now));
       }
-
       // Process the request
       handler.next(options);
     } catch (error) {
@@ -1000,7 +1013,7 @@ class SDKDioThrottler extends Interceptor {
         DioException(
           requestOptions: options,
           error: error,
-          message: 'Error in throttler: $error',
+          message: 'Error in rate limiter: $error',
         ),
       );
     }
